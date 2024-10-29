@@ -32,14 +32,14 @@ const tree = {
     ]
 }
 
-const dfs = ((child) => {
-    const queue = [child] //变为数组，然后可以使用数组的方式
-    while (queue.length > 0) {
-        const n = queue.shift() //shift会返回修改后的数组
-        console.log(n.name);
-        n.children.forEach(element => queue.push(element))//这里是将每一个子节点都加入到这个队列中，所以就不用担心第一个整体推出了之后，无法打印后续的字段
-    }
-})
+// const dfs = ((child) => {
+//     const queue = [child] //变为数组，然后可以使用数组的方式
+//     while (queue.length > 0) {
+//         const n = queue.shift() //shift会返回修改后的数组
+//         console.log(n.name);
+//         n.children.forEach(element => queue.push(element))//这里是将每一个子节点都加入到这个队列中，所以就不用担心第一个整体推出了之后，无法打印后续的字段
+//     }
+// })
 
 // =====================================================10.27=======================================================
 // const dfs_ = (tree) => {
@@ -63,5 +63,19 @@ const dfs = ((child) => {
 //         })
 //     }
 // }
+// dfs(tree)
+
+// =====================================================10.29=======================================================
+// const dfs = (tree) => {
+//     const queue = [tree]
+//     while (queue.length > 0) {
+//         let n = queue.shift()
+//         if (n.children) {
+//             console.log(n.name);
+//             queue.push(n.children)
+//         }
+//     }
+// }
+
 dfs(tree)
 

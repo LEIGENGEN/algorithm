@@ -44,4 +44,13 @@ var dfs = ((child) => {
 //     tree.children.forEach(element => dfs(element));
 // }
 
+// =====================================================10.29=======================================================
+// const dfs_ = (tree) => {
+//     // if (!tree.children) return
+//     console.log(tree.name);
+//     if (tree.children) tree.children.forEach(item => dfs_(item))
+// }
+
+// dfs_(tree)
+
 dfs(tree)
