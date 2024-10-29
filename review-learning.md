@@ -70,6 +70,10 @@ const tree = require('')
 
 - 使用element ui的date-picker组件，当使用了disable属性后，关闭这个属性再打开会没有值显示标签绑定的字段跟option绑定，修改绑定的值，自动就去会去修，不用修改option的值
   - 在blur事件使用this.forceUpdate
+ 
+### collapse
+- 默认展开
+  - 在collapse中v-model绑定一个值，在collapse-item中的name绑定同一个值
 
 ## 强制刷新
 
@@ -117,4 +121,52 @@ const dfs=()=>{}
 ### 完全二叉树
 - 二叉树中，除了最后一层节点，其他都为满二叉树
 
+# 10.28
 
+## 事件总线eventBus
+- 向外导出Vue实例
+  - 规定好数据的收发方
+   ```js
+   Bus.$on
+   Bus,$emit
+   ```
+- 引入mitt库，向外导出
+  
+## excel表格导出
+- 其实后端就能单独实现
+
+
+# 10.29
+
+## 计算属性名语法
+- 以一个对象的属性作为另一个对象的键和值
+```js
+const xx = {
+  [obj.name]:obj.key
+}
+```
+
+## v-model和:model区别
+- v-model是v-model:value的缩写
+  - 可以实现数据双向动态绑定
+- :model是v-bind:model的缩写
+  - 数据只能从父组件传递给子组件，但是子组件不能传给父组件，无法双向绑定
+
+## 读取子节点的ref
+- 子节点定义ref:child，父节点ref：chlidComponent
+```js
+this.$refs.chlidComponent.$refs.child
+```
+
+## v-html
+- 如果是作为表单提交，会产生XSS攻击
+  - 存储型（主要）
+    - 将这个恶意代码提交到数据库，用户访问网站的时候，服务器读取数据库调出这段恶意代码
+  - 反射型
+    - 用户点击带有特定参数的链接，这个链接返回一段JS代码执行
+
+## 在模板中添加 &nbsp;
+- 插入一个不间断的空格，在HTML中保持其宽度，不会因为换行而断开
+  - 防止换行
+    - 不间断空格，浏览器渲染的时候不认为是换行点
+  - 增加间距
