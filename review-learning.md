@@ -75,6 +75,26 @@ const tree = require('')
 - 默认展开
   - 在collapse中v-model绑定一个值，在collapse-item中的name绑定同一个值
 
+### table
+- render-header：列标题Label区域渲染使用Function函数
+  ```js
+  <!-- 显示一个必填选项 -->
+  addRedStar(h, { column }) {
+      return [
+        h("span", { style: "color: red" }, "*"),
+        h("span", " " + column.label),
+      ]
+    },
+  ```
+
+### 显示弹窗
+```js
+ this.$message({
+    message: `插件名称：${name} 不能重复`,
+    type: 'error',
+    duration: 5000
+});
+```
 ## 强制刷新
 
 ### this.$foreUpdate
@@ -170,3 +190,64 @@ this.$refs.chlidComponent.$refs.child
   - 防止换行
     - 不间断空格，浏览器渲染的时候不认为是换行点
   - 增加间距
+
+# 10.30
+
+## 数组
+
+### 方法
+- findIndex
+  - 接受的是一个方法，回调函数
+  ```js
+  const ages = [3, 10, 18, 20];
+  function checkAdult(age) {
+    return age >= 18;
+  }
+  console.log(ages.findIndex(checkAdult)); // 输出结果：2
+  ```
+- pop
+  - 删除数组最后一个
+- push
+  - 数组最后位置添加
+- unshift
+  - 在数组最前面添加
+- shit
+  - 删除数组第一个
+
+### 循环中不希望第一项和第一项进行匹配
+```js
+this.fileTable.forEach((currentItem, currentIndex) => {
+    let flag = this.fileTable.some((otherItem, otherIndex) => currentIndex !== otherIndex && currentItem.pluginName === otherItem.pluginName)
+})
+```
+
+## 问题
+
+### 当多选的时候，需要检测，当检测到相同的名字的，需要提示红框出来
+```js
+checkPluginUnique() {
+  let flag_ = false
+  let name = ''
+  let processedPluginNames = new Set() 
+  this.fileTable.forEach((currentItem, currentIndex) => {
+      if (processedPluginNames.has(currentItem.pluginName)) return 
+      let flag = this.fileTable.some((otherItem, otherIndex) => currentIndex !== otherIndex && currentItem.pluginName === otherItem.pluginName)
+      let items = this.fileTable.filter((item) => item.pluginName === currentItem.pluginName) //这里是返回所有有相同的字段的
+      console.log(processedPluginNames,"processedPluginNames",items);
+      if (flag) {
+          flag_ = true
+          name = currentItem.pluginName
+          items.forEach(item => item.checkUniqueVisible = true) 
+          processedPluginNames.add(currentItem.pluginName) 
+      } else  items.forEach(item => item.checkUniqueVisible = false) 
+  })
+  if (flag_) {
+      this.$message({
+          message: `插件名称：${name} 不能重复`,
+          type: 'error',
+          duration: 5000
+      })
+      return true
+  } else return false
+}, 
+```
