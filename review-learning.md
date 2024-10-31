@@ -95,6 +95,16 @@ const tree = require('')
     duration: 5000
 });
 ```
+
+### 默认打开开启
+- 父组件添加v-model，子组件添加name，这两个的值对应要一样的
+
+### 卸载列表同步
+```html
+<el-collapse v-model="itemFlag" />
+<el-collapse-item name="1" /> 
+ itemFlag = ['1']
+```
 ## 强制刷新
 
 ### this.$foreUpdate
