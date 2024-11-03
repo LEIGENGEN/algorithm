@@ -33,10 +33,10 @@ const tree = {
 }
 
 
-var dfs = ((child) => {
-    console.log(child.name);
-    if (child.children) child.children.forEach(element => dfs(element));
-})
+// var dfs = ((child) => {
+//     console.log(child.name);
+//     if (child.children) child.children.forEach(element => dfs(element));
+// })
 
 // =====================================================10.27=======================================================
 // const dfs = (tree) => {
@@ -53,4 +53,11 @@ var dfs = ((child) => {
 
 // dfs_(tree)
 
+
+const dfs = (tree) => {
+    console.log(tree.name);
+    if(tree.children) tree.children.forEach(element => {
+        dfs(element)
+    });
+}
 dfs(tree)

@@ -77,5 +77,17 @@ const tree = {
 //     }
 // }
 
+// const dfs = (tree) => {
+//     let queue = [tree]
+//     while (queue.length > 0) {
+//         let n = queue.shift()
+//         console.log(n.name);
+//         if (n.children) n.children.forEach(element => {
+//             queue.push(element)
+//         });
+//     }
+// }
+
+
 dfs(tree)
 
