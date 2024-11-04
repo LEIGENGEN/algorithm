@@ -86,6 +86,8 @@ const tree = require('')
       ]
     },
   ```
+- table实现多选
+  - select 单写一个table-column
 
 ### 显示弹窗
 ```js
@@ -261,3 +263,61 @@ checkPluginUnique() {
   } else return false
 }, 
 ```
+
+# 11.4
+
+## 自定义指令
+- 自定义指令，可以用来操作DOM
+- 自定义指令的钩子函数
+  - bind
+    - 只调用一次，指令第一次绑定到元素时调用，在这里可以进行一次性的初始化设置
+  - inserted
+    - 被绑定元素插入父节点时调用（父节点存在即可调用，不必存在于document中）
+  - update
+    - 所在组件的VNode更新时调用，但是可能发生在其子VNode更新之前。指令的值可能发生了改变，也可能没有。但是你可以通过比较更新前后的值来忽略不必要的模板更新
+```js
+import store from '@/store'
+
+export default {
+  // `inserted` 钩子函数在绑定元素插入到 DOM 中时调用
+  inserted(el, binding, vnode) {
+    const { value } = binding; // 从绑定对象中解构出 `value`，即指令的绑定值
+    const all_permission = "*:*:*"; // 定义一个常量 `all_permission`，表示拥有所有权限的标识符
+    const permissions = store.getters && store.getters['user/perms'];//从 store 中获取用户的权限列表
+
+    if (value && value instanceof Array && value.length > 0) {
+      const permissionFlag = value;
+      const hasPermissions = permissions.some(permission => {
+        return all_permission === permission || permissionFlag.includes(permission);
+      });
+      if (!hasPermissions) {
+        el.parentNode && el.parentNode.removeChild(el);
+      }
+    } else {
+      throw new Error(`请设置操作权限标签值`);
+    }
+  }
+}
+
+```
+```js
+// 在main.js中写入
+Vue.directive('hasPermi', hasPermi)
+```
+
+## mixins和hooks
+
+- 使用方式
+  - hooks是基于函数
+  - mixins是基于选项对象
+- 逻辑组合
+  - hooks可通过多个hooks来实现复杂逻辑
+  - mixins将多个选项对象混入组件来服用
+- 合并策略
+  - hooks没有合并策略，它们是独立的函数
+  - mixins，当组件和mixin中有相同的选项时候，会有特定的合并策略来处理
+    - 数据对象会被合并
+    - 生命周期钩子函数会被合并成一个数组，并且都会被调用
+- 使用版本
+  - hooks是Vue3.0新增的，Vue2.0不支持
+  - mixins是Vue2.0就有的，Vue3.0依然支持
