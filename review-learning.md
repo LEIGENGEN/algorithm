@@ -281,7 +281,7 @@ import store from '@/store'
 export default {
   // `inserted` 钩子函数在绑定元素插入到 DOM 中时调用
   inserted(el, binding, vnode) {
-    const { value } = binding; // 从绑定对象中解构出 `value`，即指令的绑定值
+    const { value } = binding; // 从绑定对象中解构出 `value`，即指令的绑定值['cs:inspection:query']
     const all_permission = "*:*:*"; // 定义一个常量 `all_permission`，表示拥有所有权限的标识符
     const permissions = store.getters && store.getters['user/perms'];//从 store 中获取用户的权限列表
 
@@ -291,6 +291,7 @@ export default {
         return all_permission === permission || permissionFlag.includes(permission);
       });
       if (!hasPermissions) {
+        // 如果没有权限，则会移除该标签
         el.parentNode && el.parentNode.removeChild(el);
       }
     } else {
@@ -321,3 +322,85 @@ Vue.directive('hasPermi', hasPermi)
 - 使用版本
   - hooks是Vue3.0新增的，Vue2.0不支持
   - mixins是Vue2.0就有的，Vue3.0依然支持
+
+## 创建一个文件导出多个组件
+```js
+export { default as AppMain } from './AppMain';
+//default 默认导出
+//as 重命名导出的变量、函数、类或对象
+```
+
+# 11.5
+
+## vuex
+- actions 
+  - 第一个参数commit
+     -  用于提交mutation的方法
+  - 第二个参数payload
+    - 传递给mutation的载荷payload
+```js
+setPerms({ commit }, perms) {
+  commit('SET_PERMS', perms);  // 提交 SET_PERMS mutation，设置用户的权限列表
+}
+```
+- namespace:true
+  - 启用命名空间
+    - 向外导出的时候，模块所有getter、action、mutation都会加上模块名作为前缀
+      - 避免命名冲突
+      - 提高可读性
+
+## 对象进行遍历 
+- for in 
+  - 遍历对象所有可枚举属性
+- object.keys()
+  - 名称：返回一个包含对象自身可枚举属性名称的数组，然后使用forEach
+```js
+const obj = {
+  name: 'John',
+  age: 30,
+  city: 'New York'
+};
+Object.keys(obj).forEach(key => {
+  console.log(key + ': ' + obj[key]);
+});
+```
+- object.value()
+  - 值：返回一个包含对象自身可枚举属性值的数组，然后使用forEach
+```js
+const obj = {
+  name: 'John',
+  age: 30,
+  city: 'New York'
+};
+Object.keys(obj).forEach(key => {
+  console.log(key + ': ' + obj[key]);
+});
+```
+- object.entries()
+  - 键值对：返回一个包含对象自身可枚举属性键值对的数组，然后使用forEach
+```js
+const obj = {
+  name: 'John',
+  age: 30,
+  city: 'New York'
+};
+Object.entries(obj).forEach(([key, value]) => {
+  console.log(key + ': ' + value);
+});
+```
+
+## replaceAll replace
+- replaceAll() 方法用于在字符串中用新的子字符串替换所有匹配的子字符串
+```js
+const str = 'Hello, world!';
+const newStr = str.replaceAll('o', 'a');
+console.log(newStr); // 'Hella, warld!'
+```
+- replace也可以替换所有匹配项，但是必须使用带有全局标志的正则表达式
+```js
+const str = "Hello world! Hello everyone!";
+const newStr = str.replace(/Hello/g, "Hi");
+console.log(newStr);  // 输出: "Hi world! Hi everyone!"
+```
+
+## 保留查询参数之后，返回上一页应该携带参数重新刷新
