@@ -88,6 +88,37 @@ const tree = require('')
   ```
 - table实现多选
   - select 单写一个table-column
+  
+- default-active 
+  - 默认激活菜单的index
+
+### menu
+- template #title（顶级菜单）
+  - el-menu-item （次级菜单）
+- 对于次级菜单，改变样式的时候，需要定义好相同的颜色，否则会出现闪烁的情况
+- 左侧菜单占满整列，样式设置height:100vh
+    - 如果页面还有header组件，则需要凑合两者，使得两者之和为100vh
+```css
+.md-menu .md-menu-item {
+  color: black !important;
+  background: white !important;
+}
+.md-menu .md-menu-item.is-active {
+  color: #2e95fb !important;
+  background: white !important;
+}
+.md-sub-menu .md-sub-menu__title {
+  color: black !important;
+  background: white !important;
+}
+.md-sub-menu .md-sub-menu__title + .md-menu--inline .md-menu-item.is-active {
+  color: #2e95fb !important;
+  background: white !important;
+}
+```
+
+### el-main
+- 能够将主要区域都设置为一个整体，自适应剩下的区域
 
 ### 显示弹窗
 ```js
@@ -233,37 +264,6 @@ this.fileTable.forEach((currentItem, currentIndex) => {
 })
 ```
 
-## 问题
-
-### 当多选的时候，需要检测，当检测到相同的名字的，需要提示红框出来
-```js
-checkPluginUnique() {
-  let flag_ = false
-  let name = ''
-  let processedPluginNames = new Set() 
-  this.fileTable.forEach((currentItem, currentIndex) => {
-      if (processedPluginNames.has(currentItem.pluginName)) return 
-      let flag = this.fileTable.some((otherItem, otherIndex) => currentIndex !== otherIndex && currentItem.pluginName === otherItem.pluginName)
-      let items = this.fileTable.filter((item) => item.pluginName === currentItem.pluginName) //这里是返回所有有相同的字段的
-      console.log(processedPluginNames,"processedPluginNames",items);
-      if (flag) {
-          flag_ = true
-          name = currentItem.pluginName
-          items.forEach(item => item.checkUniqueVisible = true) 
-          processedPluginNames.add(currentItem.pluginName) 
-      } else  items.forEach(item => item.checkUniqueVisible = false) 
-  })
-  if (flag_) {
-      this.$message({
-          message: `插件名称：${name} 不能重复`,
-          type: 'error',
-          duration: 5000
-      })
-      return true
-  } else return false
-}, 
-```
-
 # 11.4
 
 ## 自定义指令
@@ -348,7 +348,11 @@ setPerms({ commit }, perms) {
     - 向外导出的时候，模块所有getter、action、mutation都会加上模块名作为前缀
       - 避免命名冲突
       - 提高可读性
-
+- 模块化
+  - 调用的时候要加上模块名
+```js
+...mapGetters('commonState',collapse)
+```
 ## 对象进行遍历 
 - for in 
   - 遍历对象所有可枚举属性
@@ -420,7 +424,53 @@ this.$refs.myTable.toggleRowSelection(item, true);
         - 对这个变量children全添加
       - 减少
         - 对这个children进行取消
-
+- 当多选的时候，需要检测，当检测到相同的名字的，需要提示红框出来
+- 对于次级菜单，改变样式的时候，需要定义好相同的颜色，否则会出现闪烁的情况
+```js
+checkPluginUnique() {
+  let flag_ = false
+  let name = ''
+  let processedPluginNames = new Set() 
+  this.fileTable.forEach((currentItem, currentIndex) => {
+      if (processedPluginNames.has(currentItem.pluginName)) return 
+      let flag = this.fileTable.some((otherItem, otherIndex) => currentIndex !== otherIndex && currentItem.pluginName === otherItem.pluginName)
+      let items = this.fileTable.filter((item) => item.pluginName === currentItem.pluginName) //这里是返回所有有相同的字段的
+      console.log(processedPluginNames,"processedPluginNames",items);
+      if (flag) {
+          flag_ = true
+          name = currentItem.pluginName
+          items.forEach(item => item.checkUniqueVisible = true) 
+          processedPluginNames.add(currentItem.pluginName) 
+      } else  items.forEach(item => item.checkUniqueVisible = false) 
+  })
+  if (flag_) {
+      this.$message({
+          message: `插件名称：${name} 不能重复`,
+          type: 'error',
+          duration: 5000
+      })
+      return true
+  } else return false
+}, 
+```
+```css
+.md-menu .md-menu-item {
+  color: black !important;
+  background: white !important;
+}
+.md-menu .md-menu-item.is-active {
+  color: #2e95fb !important;
+  background: white !important;
+}
+.md-sub-menu .md-sub-menu__title {
+  color: black !important;
+  background: white !important;
+}
+.md-sub-menu .md-sub-menu__title + .md-menu--inline .md-menu-item.is-active {
+  color: #2e95fb !important;
+  background: white !important;
+}
+```
 ## git 
 - git revert 
   - 删除一个提交，但是这个提交记录得是最新的
@@ -448,4 +498,81 @@ const router = new VueRouter({
 });
 
 this.$route.params.id
+```
+
+# 11.7
+
+## 点击复制的实现
+- 原生
+  - 创建一个临时的 input 元素，并将需要复制的文本赋值给它。
+  - 将 input 元素添加到文档中，使其成为可选中的元素。
+  - 选中 input 元素中的文本。
+  - 执行复制命令，将选中的文本复制到剪贴板。
+  - 移除临时的 input 元素，清理 DOM。
+  - 显示一条成功消息，提示用户复制操作已成功完成。
+```js
+// 原生
+ copyHandle(value) {
+      var input = document.createElement("input")
+      input.value = value
+      document.body.appendChild(input)
+      input.select()
+      document.execCommand("Copy")
+      document.body.removeChild(input)
+      this.$message({
+        message: '复制成功！',
+        type: 'success'
+      })
+    },
+```
+- vue3 
+  - navigator.clipboard
+    - writeText() 方法用于将文本写入剪贴板
+    - readText() 方法用于从剪贴板读取文本
+```js
+this.pastedText = await navigator.clipboard.readText();
+```
+
+## html
+
+### section
+- 定义文档中独立内容区域
+- 和普通的div一样，但是语义化更强
+
+### main
+- 定义文档中主内容区域
+
+## 项目搭建
+
+### layout
+- index文件就是放置整个项目的结构，侧栏，上边，右边区域
+  - 左侧菜单占满整列，样式设置height:100vh
+    - 如果页面还有header组件，则需要凑合两者，使得两者之和为100vh
+
+## less
+- 文件里使用$
+  - 在less中，$用于定义变量，提高可维护性
+- 定义的index.less后缀文件中，引入其他less文件
+  - 使用@import
+    - 特定语法
+      - 在编译的时候可以将多个less文件合并成一个css文件
+    - 模块化
+      - 可以将样式拆分为多个文件
+
+## 文件代码块
+```js
+"Vue3-SFC": {
+		"prefix": "v3",
+		"body": [
+			"<script setup lang=\"ts\">",
+			"</script>",
+			"",
+			"<template>",
+			"</template>",
+			"",
+			"<style scoped>",
+			"</style>"
+		],
+		"description": "生成vue3文件结构"
+	}
 ```
