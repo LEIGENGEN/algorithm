@@ -404,3 +404,48 @@ console.log(newStr);  // 输出: "Hi world! Hi everyone!"
 ```
 
 ## 保留查询参数之后，返回上一页应该携带参数重新刷新
+
+# 11.6
+
+## ref
+- 使用element-table中的方法
+```js
+this.$refs.myTable.toggleRowSelection(item, true);
+```
+## 难点
+- 对于table中部分选中列表全选
+  - 因为全选是采用了一个循环每个添加，所以拿这个变量和新获得的数据进行比较，
+    - 找出少了或者多了哪一条数据，如果查到这条数据中存在children，
+      - 增加
+        - 对这个变量children全添加
+      - 减少
+        - 对这个children进行取消
+
+## git 
+- git revert 
+  - 删除一个提交，但是这个提交记录得是最新的
+ ```js
+  git revert <commit>
+ ```
+ - git cherry-pick
+   - 一个分支中选择特定的提交（commit）并将其应用到另一个分支
+```js
+  git cherry-pick <commit-hash>
+```
+
+## this.$route
+- 用于在 Vue 组件中访问当前路由信息
+```js
+const routes = [
+  {
+    path: '/user/:id',
+    name: 'user',
+    component: UserComponent
+  }
+];
+const router = new VueRouter({
+  routes
+});
+
+this.$route.params.id
+```
