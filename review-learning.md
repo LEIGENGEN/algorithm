@@ -106,7 +106,33 @@ const tree = require("");
   - el-menu-item （次级菜单）
 - 对于次级菜单，改变样式的时候，需要定义好相同的颜色，否则会出现闪烁的情况
 - 左侧菜单占满整列，样式设置 height:100vh
+
   - 如果页面还有 header 组件，则需要凑合两者，使得两者之和为 100vh
+
+- 封装 menu
+  - 使用 ts
+  - RouteRecordRaw 是 vue router 中的一个类型，用于定义路由记录的原始匹配对象
+
+```js
+// RouteRecordRaw 是 vue router 中的一个类型，用于定义路由记录的原始匹配对象
+import { RouteRecordRaw } from "vue-router";
+
+interface Props{
+  routes:readonly RouteRecordRaw[]
+}
+```
+
+- 菜单默认打开
+
+```js
+:default-openeds ="activeOpends"
+
+const activeOpends = computed(()=>{
+  return routes.value.filter(item=>{
+    return item.children && item.children.length >0
+  }).map(i=>i.path)
+})
+```
 
 ```css
 .md-menu .md-menu-item {
@@ -407,6 +433,14 @@ setPerms({ commit }, perms) {
     - 向外导出的时候，模块所有 getter、action、mutation 都会加上模块名作为前缀
       - 避免命名冲突
       - 提高可读性
+  - 访问的时候要加上命名空间的名字
+    - 如果文件名是有下划线的形式，要变为驼峰写法
+      - common_state - > commonState
+
+```js
+const is Collaspse = computed(()=>store.state.commonState.isCollaspse)
+```
+
 - 模块化
   - 调用的时候要加上模块名
 
@@ -668,4 +702,66 @@ this.pastedText = await navigator.clipboard.readText();
 		],
 		"description": "生成vue3文件结构"
 	}
+```
+
+# 11.8
+
+## vue3 可以有多个 onMounted，便于将一段相同逻辑的代码写在一起，执行顺序按照在代码中出现的顺序一致
+
+## 获取路径时候的步骤
+
+- 计算属性
+  - 确保当前路由信息发生变化的时候，依赖这些信息的组件能够自动更新
+    - 响应式更新
+    - 性能优化
+      - computed 会缓存其结果，只有在依赖的值发生变化的时候才会重新计算
+
+```js
+import { useRouter } from "vue-router";
+const router = useRouter();
+
+// 确保当前路由信息发生变化的时候，依赖这些信息的组件能够自动更新
+const routes = computed(() => router.options.routes);
+```
+
+## ts 中定义 props
+
+- 定义 interface
+  - 用于定义对象那个结构的方式，用于描述对象的形状，包括对象的属性及其类型
+
+```ts
+// 定义props的类型
+interface Props {
+  title: string;
+  count: number;
+}
+
+// 使用defineProps函数定义props
+const props = defineProps<Props>();
+```
+
+- 封装 menu
+  - 使用 ts
+  - RouteRecordRaw 是 vue router 中的一个类型，用于定义路由记录的原始匹配对象
+
+```js
+// RouteRecordRaw 是 vue router 中的一个类型，用于定义路由记录的原始匹配对象
+import { RouteRecordRaw } from "vue-router";
+
+interface Props{
+  routes:readonly RouteRecordRaw[]
+}
+```
+
+## this.$nextTick
+
+- vue 在更换 dom 的时候是异步执行的，如果是同步更新，会有损性能，当侦听到数据变化的时候，vue 将开启一个队列，缓冲在同一时间循环中所有数据变更
+- 对于异步队列是采用 Promise.then、Mutation Observer 和 setTimeout 来匹配不同浏览器的策略
+
+## 切换请求时候的域名和端口
+
+```js
+axios.create({
+  baseURL: "http://xxx.xxx.xxx:22",
+});
 ```
