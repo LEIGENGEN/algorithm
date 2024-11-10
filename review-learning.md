@@ -1,31 +1,33 @@
 # 10.27
-## require和import的区别
+
+## require 和 import 的区别
 
 ### 加载时机
 
-- import是在编译时加载的，必须放在文件的开头
-- require是在运行时加载的，可以放在代码的任何位置
+- import 是在编译时加载的，必须放在文件的开头
+- require 是在运行时加载的，可以放在代码的任何位置
 
 ### 所属规范
 
-- import是ES6（2015）引入的关键字，属于ES模块化语法规范 -- 俄国十月革命（11）
-- require是CommonJS规范的一部分，主要用于Node.js环境
+- import 是 ES6（2015）引入的关键字，属于 ES 模块化语法规范 -- 俄国十月革命（11）
+- require 是 CommonJS 规范的一部分，主要用于 Node.js 环境
 
 ### 动态绑定
 
-- import提供静态分析，支持宏和类型检验
+- import 提供静态分析，支持宏和类型检验
   - 宏 预处理指令
-- require提供动态绑定，更适合服务器或浏览器环境
+- require 提供动态绑定，更适合服务器或浏览器环境
 
 ### 导入值的修改
 
-- import导入的对象值被修改时，源对象也会被修改，相当于深拷贝
-- require导入值被修改的时候，源对象不会被改变，相当于浅拷贝
+- import 导入的对象值被修改时，源对象也会被修改，相当于深拷贝
+- require 导入值被修改的时候，源对象不会被改变，相当于浅拷贝
 
 ### 使用区别
 
 - import
-  - 需要在文件夹中添加package.json文件
+
+  - 需要在文件夹中添加 package.json 文件
 
   ```js
   {
@@ -34,22 +36,22 @@
   ```
 
 ```js
-const tree = {}
+const tree = {};
 
 // 第一种
-export default tree
+export default tree;
 // 第二种
-export {tree}
+export { tree };
 ```
 
 ```js
-import xx from ''
+import xx from "";
 ```
 
 - require
 
 ```js
-const tree = require('')
+const tree = require("");
 ```
 
 ## 返回上一页保留查询条件
@@ -64,19 +66,22 @@ const tree = require('')
 
 ### select
 
-- 标签绑定的字段跟option绑定，修改绑定的值，自动就去会去修，不用修改option的值
+- 标签绑定的字段跟 option 绑定，修改绑定的值，自动就去会去修，不用修改 option 的值
 
 ### date-picker
 
-- 使用element ui的date-picker组件，当使用了disable属性后，关闭这个属性再打开会没有值显示标签绑定的字段跟option绑定，修改绑定的值，自动就去会去修，不用修改option的值
-  - 在blur事件使用this.forceUpdate
- 
+- 使用 element ui 的 date-picker 组件，当使用了 disable 属性后，关闭这个属性再打开会没有值显示标签绑定的字段跟 option 绑定，修改绑定的值，自动就去会去修，不用修改 option 的值
+  - 在 blur 事件使用 this.forceUpdate
+
 ### collapse
+
 - 默认展开
-  - 在collapse中v-model绑定一个值，在collapse-item中的name绑定同一个值
+  - 在 collapse 中 v-model 绑定一个值，在 collapse-item 中的 name 绑定同一个值
 
 ### table
-- render-header：列标题Label区域渲染使用Function函数
+
+- render-header：列标题 Label 区域渲染使用 Function 函数
+
   ```js
   <!-- 显示一个必填选项 -->
   addRedStar(h, { column }) {
@@ -86,18 +91,23 @@ const tree = require('')
       ]
     },
   ```
-- table实现多选
-  - select 单写一个table-column
-  
-- default-active 
-  - 默认激活菜单的index
+
+- table 实现多选
+
+  - select 单写一个 table-column
+
+- default-active
+
+  - 默认激活菜单的 index
 
 ### menu
+
 - template #title（顶级菜单）
   - el-menu-item （次级菜单）
 - 对于次级菜单，改变样式的时候，需要定义好相同的颜色，否则会出现闪烁的情况
-- 左侧菜单占满整列，样式设置height:100vh
-    - 如果页面还有header组件，则需要凑合两者，使得两者之和为100vh
+- 左侧菜单占满整列，样式设置 height:100vh
+  - 如果页面还有 header 组件，则需要凑合两者，使得两者之和为 100vh
+
 ```css
 .md-menu .md-menu-item {
   color: black !important;
@@ -118,26 +128,31 @@ const tree = require('')
 ```
 
 ### el-main
+
 - 能够将主要区域都设置为一个整体，自适应剩下的区域
 
 ### 显示弹窗
+
 ```js
- this.$message({
-    message: `插件名称：${name} 不能重复`,
-    type: 'error',
-    duration: 5000
+this.$message({
+  message: `插件名称：${name} 不能重复`,
+  type: "error",
+  duration: 5000,
 });
 ```
 
 ### 默认打开开启
-- 父组件添加v-model，子组件添加name，这两个的值对应要一样的
+
+- 父组件添加 v-model，子组件添加 name，这两个的值对应要一样的
 
 ### 卸载列表同步
+
 ```html
 <el-collapse v-model="itemFlag" />
-<el-collapse-item name="1" /> 
- itemFlag = ['1']
+<el-collapse-item name="1" />
+itemFlag = ['1']
 ```
+
 ## 强制刷新
 
 ### this.$foreUpdate
@@ -146,90 +161,110 @@ const tree = require('')
 
   - 异步更新
   - 替换整个对象或数组，用新的对象或数组替换原来的对象或数组
+
 - 强制组件更新
 - 处理非响应式数据
 
-  - 直接修改对象或数组的属性，该属性不是通过Vue.set方法添加的，无法检测这些变化
+  - 直接修改对象或数组的属性，该属性不是通过 Vue.set 方法添加的，无法检测这些变化
+
 - 触发生命周期钩子函数
 
-  - beforeUpdate和update
+  - beforeUpdate 和 update
+
 - 影响性能表现
 
-  - 会跳过vue.js的性能优化机制
+  - 会跳过 vue.js 的性能优化机制
 
 ## 执行函数和立即执行函数
+
 ```js
-const dfs=(()=>{})
-const dfs=()=>{}
+const dfs = () => {};
+const dfs = () => {};
 ```
-- 第一种是立即执行函数，dfs会被赋值，值为这个函数的返回值
+
+- 第一种是立即执行函数，dfs 会被赋值，值为这个函数的返回值
   - 创建一个独立的作用域，避免变量污染全局作用域
 - 第二种是箭头函数表达式
-  - 没有argument
-  - 没有自己的this
-    - 箭头函数不会创建自己的this对象，只会继承在自己作用域的上一层this
-  - 不能修改this指向
-  - 没有prototype属性
+  - 没有 argument
+  - 没有自己的 this
+    - 箭头函数不会创建自己的 this 对象，只会继承在自己作用域的上一层 this
+  - 不能修改 this 指向
+  - 没有 prototype 属性
   - 不能作为构造函数
-    - 没有this，没有prototype属性
+    - 没有 this，没有 prototype 属性
     - new 内部的实现
       - 创建一个新的空对象
-      - 设置原型，将原型的对象设置为函数的prototype对象
-      - 让函数的this指向这个对象，执行构造函数的代码
+      - 设置原型，将原型的对象设置为函数的 prototype 对象
+      - 让函数的 this 指向这个对象，执行构造函数的代码
       - 返回新的对象
+
 ## 树
+
 ### 二叉树
-- 使用Object模拟
-  
+
+- 使用 Object 模拟
+
 ### 完全二叉树
+
 - 二叉树中，除了最后一层节点，其他都为满二叉树
 
 # 10.28
 
-## 事件总线eventBus
-- 向外导出Vue实例
-  - 规定好数据的收发方
-   ```js
-   Bus.$on
-   Bus,$emit
-   ```
-- 引入mitt库，向外导出
-  
-## excel表格导出
-- 其实后端就能单独实现
+## 事件总线 eventBus
 
+- 向外导出 Vue 实例
+
+  - 规定好数据的收发方
+
+  ```js
+  Bus.$on;
+  Bus, $emit;
+  ```
+
+- 引入 mitt 库，向外导出
+
+## excel 表格导出
+
+- 其实后端就能单独实现
 
 # 10.29
 
 ## 计算属性名语法
+
 - 以一个对象的属性作为另一个对象的键和值
+
 ```js
 const xx = {
-  [obj.name]:obj.key
-}
+  [obj.name]: obj.key,
+};
 ```
 
-## v-model和:model区别
-- v-model是v-model:value的缩写
+## v-model 和:model 区别
+
+- v-model 是 v-model:value 的缩写
   - 可以实现数据双向动态绑定
-- :model是v-bind:model的缩写
+- :model 是 v-bind:model 的缩写
   - 数据只能从父组件传递给子组件，但是子组件不能传给父组件，无法双向绑定
 
-## 读取子节点的ref
-- 子节点定义ref:child，父节点ref：chlidComponent
+## 读取子节点的 ref
+
+- 子节点定义 ref:child，父节点 ref：chlidComponent
+
 ```js
-this.$refs.chlidComponent.$refs.child
+this.$refs.chlidComponent.$refs.child;
 ```
 
 ## v-html
-- 如果是作为表单提交，会产生XSS攻击
+
+- 如果是作为表单提交，会产生 XSS 攻击
   - 存储型（主要）
     - 将这个恶意代码提交到数据库，用户访问网站的时候，服务器读取数据库调出这段恶意代码
   - 反射型
-    - 用户点击带有特定参数的链接，这个链接返回一段JS代码执行
+    - 用户点击带有特定参数的链接，这个链接返回一段 JS 代码执行
 
 ## 在模板中添加 &nbsp;
-- 插入一个不间断的空格，在HTML中保持其宽度，不会因为换行而断开
+
+- 插入一个不间断的空格，在 HTML 中保持其宽度，不会因为换行而断开
   - 防止换行
     - 不间断空格，浏览器渲染的时候不认为是换行点
   - 增加间距
@@ -239,8 +274,11 @@ this.$refs.chlidComponent.$refs.child
 ## 数组
 
 ### 方法
+
 - findIndex
+
   - 接受的是一个方法，回调函数
+
   ```js
   const ages = [3, 10, 18, 20];
   function checkAdult(age) {
@@ -248,47 +286,64 @@ this.$refs.chlidComponent.$refs.child
   }
   console.log(ages.findIndex(checkAdult)); // 输出结果：2
   ```
+
 - pop
+
   - 删除数组最后一个
+
 - push
+
   - 数组最后位置添加
+
 - unshift
+
   - 在数组最前面添加
+
 - shit
+
   - 删除数组第一个
 
 ### 循环中不希望第一项和第一项进行匹配
+
 ```js
 this.fileTable.forEach((currentItem, currentIndex) => {
-    let flag = this.fileTable.some((otherItem, otherIndex) => currentIndex !== otherIndex && currentItem.pluginName === otherItem.pluginName)
-})
+  let flag = this.fileTable.some(
+    (otherItem, otherIndex) =>
+      currentIndex !== otherIndex &&
+      currentItem.pluginName === otherItem.pluginName
+  );
+});
 ```
 
 # 11.4
 
 ## 自定义指令
-- 自定义指令，可以用来操作DOM
+
+- 自定义指令，可以用来操作 DOM
 - 自定义指令的钩子函数
   - bind
     - 只调用一次，指令第一次绑定到元素时调用，在这里可以进行一次性的初始化设置
   - inserted
-    - 被绑定元素插入父节点时调用（父节点存在即可调用，不必存在于document中）
+    - 被绑定元素插入父节点时调用（父节点存在即可调用，不必存在于 document 中）
   - update
-    - 所在组件的VNode更新时调用，但是可能发生在其子VNode更新之前。指令的值可能发生了改变，也可能没有。但是你可以通过比较更新前后的值来忽略不必要的模板更新
+    - 所在组件的 VNode 更新时调用，但是可能发生在其子 VNode 更新之前。指令的值可能发生了改变，也可能没有。但是你可以通过比较更新前后的值来忽略不必要的模板更新
+
 ```js
-import store from '@/store'
+import store from "@/store";
 
 export default {
   // `inserted` 钩子函数在绑定元素插入到 DOM 中时调用
   inserted(el, binding, vnode) {
     const { value } = binding; // 从绑定对象中解构出 `value`，即指令的绑定值['cs:inspection:query']
     const all_permission = "*:*:*"; // 定义一个常量 `all_permission`，表示拥有所有权限的标识符
-    const permissions = store.getters && store.getters['user/perms'];//从 store 中获取用户的权限列表
+    const permissions = store.getters && store.getters["user/perms"]; //从 store 中获取用户的权限列表
 
     if (value && value instanceof Array && value.length > 0) {
       const permissionFlag = value;
-      const hasPermissions = permissions.some(permission => {
-        return all_permission === permission || permissionFlag.includes(permission);
+      const hasPermissions = permissions.some((permission) => {
+        return (
+          all_permission === permission || permissionFlag.includes(permission)
+        );
       });
       if (!hasPermissions) {
         // 如果没有权限，则会移除该标签
@@ -297,35 +352,36 @@ export default {
     } else {
       throw new Error(`请设置操作权限标签值`);
     }
-  }
-}
-
+  },
+};
 ```
+
 ```js
 // 在main.js中写入
-Vue.directive('hasPermi', hasPermi)
+Vue.directive("hasPermi", hasPermi);
 ```
 
-## mixins和hooks
+## mixins 和 hooks
 
 - 使用方式
-  - hooks是基于函数
-  - mixins是基于选项对象
+  - hooks 是基于函数
+  - mixins 是基于选项对象
 - 逻辑组合
-  - hooks可通过多个hooks来实现复杂逻辑
-  - mixins将多个选项对象混入组件来服用
+  - hooks 可通过多个 hooks 来实现复杂逻辑
+  - mixins 将多个选项对象混入组件来服用
 - 合并策略
-  - hooks没有合并策略，它们是独立的函数
-  - mixins，当组件和mixin中有相同的选项时候，会有特定的合并策略来处理
+  - hooks 没有合并策略，它们是独立的函数
+  - mixins，当组件和 mixin 中有相同的选项时候，会有特定的合并策略来处理
     - 数据对象会被合并
     - 生命周期钩子函数会被合并成一个数组，并且都会被调用
 - 使用版本
-  - hooks是Vue3.0新增的，Vue2.0不支持
-  - mixins是Vue2.0就有的，Vue3.0依然支持
+  - hooks 是 Vue3.0 新增的，Vue2.0 不支持
+  - mixins 是 Vue2.0 就有的，Vue3.0 依然支持
 
 ## 创建一个文件导出多个组件
+
 ```js
-export { default as AppMain } from './AppMain';
+export { default as AppMain } from "./AppMain";
 //default 默认导出
 //as 重命名导出的变量、函数、类或对象
 ```
@@ -333,78 +389,93 @@ export { default as AppMain } from './AppMain';
 # 11.5
 
 ## vuex
-- actions 
-  - 第一个参数commit
-     -  用于提交mutation的方法
-  - 第二个参数payload
-    - 传递给mutation的载荷payload
+
+- actions
+  - 第一个参数 commit
+    - 用于提交 mutation 的方法
+  - 第二个参数 payload
+    - 传递给 mutation 的载荷 payload
+
 ```js
 setPerms({ commit }, perms) {
   commit('SET_PERMS', perms);  // 提交 SET_PERMS mutation，设置用户的权限列表
 }
 ```
+
 - namespace:true
   - 启用命名空间
-    - 向外导出的时候，模块所有getter、action、mutation都会加上模块名作为前缀
+    - 向外导出的时候，模块所有 getter、action、mutation 都会加上模块名作为前缀
       - 避免命名冲突
       - 提高可读性
 - 模块化
   - 调用的时候要加上模块名
+
 ```js
 ...mapGetters('commonState',collapse)
 ```
-## 对象进行遍历 
-- for in 
+
+## 对象进行遍历
+
+- for in
   - 遍历对象所有可枚举属性
 - object.keys()
-  - 名称：返回一个包含对象自身可枚举属性名称的数组，然后使用forEach
+  - 名称：返回一个包含对象自身可枚举属性名称的数组，然后使用 forEach
+
 ```js
 const obj = {
-  name: 'John',
+  name: "John",
   age: 30,
-  city: 'New York'
+  city: "New York",
 };
-Object.keys(obj).forEach(key => {
-  console.log(key + ': ' + obj[key]);
+Object.keys(obj).forEach((key) => {
+  console.log(key + ": " + obj[key]);
 });
 ```
+
 - object.value()
-  - 值：返回一个包含对象自身可枚举属性值的数组，然后使用forEach
+  - 值：返回一个包含对象自身可枚举属性值的数组，然后使用 forEach
+
 ```js
 const obj = {
-  name: 'John',
+  name: "John",
   age: 30,
-  city: 'New York'
+  city: "New York",
 };
-Object.keys(obj).forEach(key => {
-  console.log(key + ': ' + obj[key]);
+Object.keys(obj).forEach((key) => {
+  console.log(key + ": " + obj[key]);
 });
 ```
+
 - object.entries()
-  - 键值对：返回一个包含对象自身可枚举属性键值对的数组，然后使用forEach
+  - 键值对：返回一个包含对象自身可枚举属性键值对的数组，然后使用 forEach
+
 ```js
 const obj = {
-  name: 'John',
+  name: "John",
   age: 30,
-  city: 'New York'
+  city: "New York",
 };
 Object.entries(obj).forEach(([key, value]) => {
-  console.log(key + ': ' + value);
+  console.log(key + ": " + value);
 });
 ```
 
 ## replaceAll replace
+
 - replaceAll() 方法用于在字符串中用新的子字符串替换所有匹配的子字符串
+
 ```js
-const str = 'Hello, world!';
-const newStr = str.replaceAll('o', 'a');
+const str = "Hello, world!";
+const newStr = str.replaceAll("o", "a");
 console.log(newStr); // 'Hella, warld!'
 ```
-- replace也可以替换所有匹配项，但是必须使用带有全局标志的正则表达式
+
+- replace 也可以替换所有匹配项，但是必须使用带有全局标志的正则表达式
+
 ```js
 const str = "Hello world! Hello everyone!";
 const newStr = str.replace(/Hello/g, "Hi");
-console.log(newStr);  // 输出: "Hi world! Hi everyone!"
+console.log(newStr); // 输出: "Hi world! Hi everyone!"
 ```
 
 ## 保留查询参数之后，返回上一页应该携带参数重新刷新
@@ -412,36 +483,41 @@ console.log(newStr);  // 输出: "Hi world! Hi everyone!"
 # 11.6
 
 ## ref
-- 使用element-table中的方法
+
+- 使用 element-table 中的方法
+
 ```js
 this.$refs.myTable.toggleRowSelection(item, true);
 ```
+
 ## 难点
-- 对于table中部分选中列表全选
+
+- 对于 table 中部分选中列表全选
   - 因为全选是采用了一个循环每个添加，所以拿这个变量和新获得的数据进行比较，
-    - 找出少了或者多了哪一条数据，如果查到这条数据中存在children，
+    - 找出少了或者多了哪一条数据，如果查到这条数据中存在 children，
       - 增加
-        - 对这个变量children全添加
+        - 对这个变量 children 全添加
       - 减少
-        - 对这个children进行取消
+        - 对这个 children 进行取消
 - 当多选的时候，需要检测，当检测到相同的名字的，需要提示红框出来
 - 对于次级菜单，改变样式的时候，需要定义好相同的颜色，否则会出现闪烁的情况
+
 ```js
 checkPluginUnique() {
   let flag_ = false
   let name = ''
-  let processedPluginNames = new Set() 
+  let processedPluginNames = new Set()
   this.fileTable.forEach((currentItem, currentIndex) => {
-      if (processedPluginNames.has(currentItem.pluginName)) return 
+      if (processedPluginNames.has(currentItem.pluginName)) return
       let flag = this.fileTable.some((otherItem, otherIndex) => currentIndex !== otherIndex && currentItem.pluginName === otherItem.pluginName)
       let items = this.fileTable.filter((item) => item.pluginName === currentItem.pluginName) //这里是返回所有有相同的字段的
       console.log(processedPluginNames,"processedPluginNames",items);
       if (flag) {
           flag_ = true
           name = currentItem.pluginName
-          items.forEach(item => item.checkUniqueVisible = true) 
-          processedPluginNames.add(currentItem.pluginName) 
-      } else  items.forEach(item => item.checkUniqueVisible = false) 
+          items.forEach(item => item.checkUniqueVisible = true)
+          processedPluginNames.add(currentItem.pluginName)
+      } else  items.forEach(item => item.checkUniqueVisible = false)
   })
   if (flag_) {
       this.$message({
@@ -451,8 +527,9 @@ checkPluginUnique() {
       })
       return true
   } else return false
-}, 
+},
 ```
+
 ```css
 .md-menu .md-menu-item {
   color: black !important;
@@ -471,38 +548,46 @@ checkPluginUnique() {
   background: white !important;
 }
 ```
-## git 
-- git revert 
+
+## git
+
+- git revert
   - 删除一个提交，但是这个提交记录得是最新的
- ```js
+
+```js
   git revert <commit>
- ```
- - git cherry-pick
-   - 一个分支中选择特定的提交（commit）并将其应用到另一个分支
+```
+
+- git cherry-pick
+  - 一个分支中选择特定的提交（commit）并将其应用到另一个分支
+
 ```js
   git cherry-pick <commit-hash>
 ```
 
 ## this.$route
+
 - 用于在 Vue 组件中访问当前路由信息
+
 ```js
 const routes = [
   {
-    path: '/user/:id',
-    name: 'user',
-    component: UserComponent
-  }
+    path: "/user/:id",
+    name: "user",
+    component: UserComponent,
+  },
 ];
 const router = new VueRouter({
-  routes
+  routes,
 });
 
-this.$route.params.id
+this.$route.params.id;
 ```
 
 # 11.7
 
 ## 点击复制的实现
+
 - 原生
   - 创建一个临时的 input 元素，并将需要复制的文本赋值给它。
   - 将 input 元素添加到文档中，使其成为可选中的元素。
@@ -510,6 +595,7 @@ this.$route.params.id
   - 执行复制命令，将选中的文本复制到剪贴板。
   - 移除临时的 input 元素，清理 DOM。
   - 显示一条成功消息，提示用户复制操作已成功完成。
+
 ```js
 // 原生
  copyHandle(value) {
@@ -525,10 +611,12 @@ this.$route.params.id
       })
     },
 ```
-- vue3 
+
+- vue3
   - navigator.clipboard
     - writeText() 方法用于将文本写入剪贴板
     - readText() 方法用于从剪贴板读取文本
+
 ```js
 this.pastedText = await navigator.clipboard.readText();
 ```
@@ -536,30 +624,35 @@ this.pastedText = await navigator.clipboard.readText();
 ## html
 
 ### section
+
 - 定义文档中独立内容区域
-- 和普通的div一样，但是语义化更强
+- 和普通的 div 一样，但是语义化更强
 
 ### main
+
 - 定义文档中主内容区域
 
 ## 项目搭建
 
 ### layout
-- index文件就是放置整个项目的结构，侧栏，上边，右边区域
-  - 左侧菜单占满整列，样式设置height:100vh
-    - 如果页面还有header组件，则需要凑合两者，使得两者之和为100vh
+
+- index 文件就是放置整个项目的结构，侧栏，上边，右边区域
+  - 左侧菜单占满整列，样式设置 height:100vh
+    - 如果页面还有 header 组件，则需要凑合两者，使得两者之和为 100vh
 
 ## less
+
 - 文件里使用$
-  - 在less中，$用于定义变量，提高可维护性
-- 定义的index.less后缀文件中，引入其他less文件
+  - 在 less 中，$用于定义变量，提高可维护性
+- 定义的 index.less 后缀文件中，引入其他 less 文件
   - 使用@import
     - 特定语法
-      - 在编译的时候可以将多个less文件合并成一个css文件
+      - 在编译的时候可以将多个 less 文件合并成一个 css 文件
     - 模块化
       - 可以将样式拆分为多个文件
 
 ## 文件代码块
+
 ```js
 "Vue3-SFC": {
 		"prefix": "v3",
