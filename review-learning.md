@@ -153,6 +153,16 @@ const activeOpends = computed(()=>{
 }
 ```
 
+- sidebar 在 table 使用的时候会被遮挡
+- 自带设置 overflow hidden
+
+```js
+.md-scrollbar {
+  /* 解决在hostManagement的时候，table必须要设置宽度 */
+  overflow: visible;
+}
+```
+
 ### el-main
 
 - 能够将主要区域都设置为一个整体，自适应剩下的区域
@@ -764,4 +774,134 @@ interface Props{
 axios.create({
   baseURL: "http://xxx.xxx.xxx:22",
 });
+```
+
+# 11.11
+
+## vue-router
+
+- vue 通过 router-view 来进行内容的展示，在 router 的 index 中，component 会根据 path 路径的不同来进行不同组件的加载
+
+## watch 和 computed
+
+- watch
+  - 缓存
+  - 页面刷新的时候立刻加载
+  - 深度监听
+  - 同步计算
+    - 访问一个计算属性的时候，vue 会立即计算并返回结果，而不是异步地等待某个操作完成
+      - 计算属性不会涉及到异步操作
+
+## 获取路径
+
+- 当前网页路径
+
+```js
+import { useRoute } from "vue-router";
+import { computed } from "vue";
+const router = useRoute();
+const isHomeVisible = computed(() => router.path === "/home");
+```
+
+- 获取 router 中定义的路径
+
+```js
+import { useRouter } from "vue-router";
+const router = useRouter();
+router.options.routes;
+```
+
+## vite
+
+```js
+import.meta.env.VITE_URI_PREX;
+```
+
+- 在代码中访问环境变量
+  - 通过环境变量配置项目的不同环境
+- import.meta.env
+  - 一个对象，包含所有以 VITE\_开头的环境变量
+
+```js
+# .env.development
+VITE_URI_PREX=https://dev.api.example.com
+# .env.production
+VITE_URI_PREX=https://api.example.com
+```
+
+- 根据不同环境运行项目，vite 自动加载相应的环境变量
+
+```js
+# 开发环境
+npm run dev
+
+# 生产环境
+npm run build
+npm run serve
+```
+
+## 插槽
+
+- 如果 slot-scope 中,scope 报错，换成 v-slot
+
+```js
+<md-table-column label="日期" width="120">
+  <template slot-scope="scope">{{ scope.row.date }}</template>
+  <template v-slot="scope">{{ scope.row.date }}</template>
+</md-table-column>
+```
+
+- vue2
+  - slot-scope
+- vue3
+  - v-slot
+    - 可以省略 default 插槽名
+
+## mock
+
+- 使用的时候要引入
+
+  - 要在 main.js 中引入
+
+```js
+import "../mock/index";
+```
+
+- vite 中路径请求替换
+  - rewrite: (path) => path.replace(/^\/api/, "/")：重写请求路径，将路径中的 /api 前缀替换为 /。例如，/api/ws/somepath 将被重写为 /ws/somepath。
+
+```js
+server: {
+  proxy: {
+    "/api/ws": {
+      target: config.wsProxyUrl,
+      rewrite: (path) => path.replace(/^\/api/, "/"),
+      ws: true,
+      changeOrigin: true,
+    },
+    // 此处本地开发代理
+    "/api": {
+      target: config.httpProxyUrl,
+      rewrite: (path) => path.replace(/^\/api/, "/"),
+    },
+  },
+}
+```
+
+## TS
+
+- 定义数组变量
+  - let tableData: Array<tableDataTs> 冒号
+
+```ts
+interface tableDataTs {
+  ip: string;
+  hostname: string;
+  resource: string;
+  os: string;
+  cpu_arch: string;
+  start_time: Date;
+  state: number;
+}
+let tableData: Array<tableDataTs> = reactive([]);
 ```
