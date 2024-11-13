@@ -100,6 +100,10 @@ const tree = require("");
 
   - 默认激活菜单的 index
 
+- 固定高度
+
+  - height 属性
+
 ### menu
 
 - template #title（顶级菜单）
@@ -863,6 +867,9 @@ npm run serve
 
   - 要在 main.js 中引入
 
+- @title
+  - 会有空格导致报错，使用@sentence
+
 ```js
 import "../mock/index";
 ```
@@ -904,4 +911,57 @@ interface tableDataTs {
   state: number;
 }
 let tableData: Array<tableDataTs> = reactive([]);
+```
+
+# 11.12
+
+- [...filterOsList.values()]
+  - 可以将 map 的结果转为数组展开
+
+## 跳转到目标路径
+
+```js
+let router = useRouter();
+router.psuh({ name: "" });
+```
+
+```js
+children: [
+  {
+    path: "/hostManagement",
+    name: "hostManagement",
+    meta: { title: "主机管理" },
+    component: () => import("../pages/hostManagement/index.vue"),
+    children: [
+      {
+        path: "/hostManagement/detailBatchOperation",
+        name: "detailBatchOperation",
+        component: () =>
+          import(
+            "../pages/hostManagement/detailBatchOperation/index.vue"
+          ),
+      },
+    ],
+  },
+  {
+    path: "/dataManagement",
+    name: "dataManagement",
+    meta: { title: "数据库管理" },
+    component: null,
+  },
+],
+```
+
+## 路径传参
+
+```js
+router.push({ name: pageName, params: { targetHostNumber: 6 } });
+```
+
+- path: "/hostManagement/detailBatchOperation/:targetHostNumber",
+  - ：
+
+```js
+const route = useRoute();
+const targetHostNumber = computed(() => route.params.targetHostNumber);
 ```
