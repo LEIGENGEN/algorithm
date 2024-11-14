@@ -462,6 +462,24 @@ const is Collaspse = computed(()=>store.state.commonState.isCollaspse)
 ...mapGetters('commonState',collapse)
 ```
 
+- vue2 使用
+  - 引入 mapGetter，在 computed 中，而且使用的时候还需要知道
+  - 使用 getter，就需要有定义的
+
+```js
+const getters = {
+  //使用getter，就需要有定义的
+  isCollapse: (state) => state.isCollapse,
+  deployEnv: (state) => state.deployEnv,
+};
+```
+
+- 有命名空间
+
+```js
+this.$store.commit("commonState/setDeployEnv", true);
+```
+
 ## 对象进行遍历
 
 - for in
@@ -595,6 +613,24 @@ checkPluginUnique() {
   color: #2e95fb !important;
   background: white !important;
 }
+```
+
+- 数据不一致，延时，父组件获得的数据延时传入
+  - 使用 watch，立即执行，深度监听，设置变量接收
+
+```js
+let menuListBak = reactive([]);
+let fromList = reactive([]);
+watch(
+  () => props.menuList,
+  (newVal) => {
+    if (newVal) {
+      Object.assign(menuListBak, newVal);
+      Object.assign(fromList, splitFunList(menuListBak, props.splitNumber));
+    }
+  },
+  { immediate: true, deep: true }
+);
 ```
 
 ## git
@@ -960,8 +996,31 @@ router.push({ name: pageName, params: { targetHostNumber: 6 } });
 
 - path: "/hostManagement/detailBatchOperation/:targetHostNumber",
   - ：
+    - 这里的：，如果是路径有的话，那跳转的时候也必须带上，否则会报错
 
 ```js
 const route = useRoute();
 const targetHostNumber = computed(() => route.params.targetHostNumber);
 ```
+
+# 11.14
+
+- 代码编辑器 vue-codemirror
+
+- router 跳转
+
+```js
+ // 这里的name需要和其他的不同，否则无法跳转！！！
+{
+  path: "/",
+  name: "root",
+  // name: "home",
+  meta: { title: "首页" },
+  redirect: "/home",
+  // redirect: "/deploy/list",
+},
+```
+
+- defineProps 不用显式地引入
+
+- console.log 在浏览器中输出的是最后的结果，对于延时数据查找不到，但是 length 不会

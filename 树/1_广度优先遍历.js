@@ -1,36 +1,36 @@
 const tree = {
-    id: 1,
-    parentId: null,
-    name: "root1",
-    children: [
+  id: 1,
+  parentId: null,
+  name: "root1",
+  children: [
+    {
+      id: 2,
+      parentId: 1,
+      name: "child1",
+      children: [
         {
-            id: 2,
-            parentId: 1,
-            name: "child1",
-            children: [
-                {
-                    id: 4,
-                    parentId: 2,
-                    name: "grandchild1",
-                    children: []
-                }
-            ]
+          id: 4,
+          parentId: 2,
+          name: "grandchild1",
+          children: [],
         },
+      ],
+    },
+    {
+      id: 3,
+      parentId: 1,
+      name: "child2",
+      children: [
         {
-            id: 3,
-            parentId: 1,
-            name: "child2",
-            children: [
-                {
-                    id: 5,
-                    parentId: 3,
-                    name: "grandchild2",
-                    children: []
-                }
-            ]
-        }
-    ]
-}
+          id: 5,
+          parentId: 3,
+          name: "grandchild2",
+          children: [],
+        },
+      ],
+    },
+  ],
+};
 
 // const dfs = ((child) => {
 //     const queue = [child] //变为数组，然后可以使用数组的方式
@@ -78,16 +78,26 @@ const tree = {
 // }
 
 // const dfs = (tree) => {
-//     let queue = [tree]
-//     while (queue.length > 0) {
-//         let n = queue.shift()
-//         console.log(n.name);
-//         if (n.children) n.children.forEach(element => {
-//             queue.push(element)
-//         });
-//     }
-// }
+//   let queue = [tree];
+//   while (queue.length > 0) {
+//     let n = queue.shift();
+//     console.log(n.name);
+//     if (n.children)
+//       n.children.forEach((element) => {
+//         queue.push(element);
+//       });
+//   }
+// };
 
+//  ===== 错误 要牢记这里广度优先遍历  是需要向queue中添加的！
+// const dfs = (tree) => {
+//   let queue = [tree];
+//   let temp = queue.shift();
+//   console.log(temp.name);
+//   if (temp.children)
+//     temp.children.forEach((element) => {
+//       temp.push(element);
+//     });
+// };
 
-dfs(tree)
-
+dfs(tree);
