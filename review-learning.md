@@ -1024,3 +1024,161 @@ const targetHostNumber = computed(() => route.params.targetHostNumber);
 - defineProps 不用显式地引入
 
 - console.log 在浏览器中输出的是最后的结果，对于延时数据查找不到，但是 length 不会
+
+## 11.15
+
+### CMS
+
+- 内部链接和外部链接
+  - 通过 app-link 组件来跳转
+    - a 标签
+    - roter-link
+- 多级菜单
+
+  - 模板
+    - 组件
+      - 函数式组件 render
+  - n 级菜单
+    - 递归渲染
+
+### path.resolve
+
+- path.resolve
+  - 会从右到左依次处理每个路径片段，直到构建出一个绝对路径。如果处理过程中遇到一个绝对路径，它会将之前的所有路径片段忽略，并从这个绝对路径开始构建最终的路径。
+
+```js
+const path = require("path");
+
+const absolutePath = path.resolve("foo", "bar", "baz");
+console.log(absolutePath); // 输出: /current/working/directory/foo/bar/baz
+```
+
+- defineEmits
+  - 使用的时候需要先引入 import
+  - 定义的时候是一个括号包裹的
+
+```js
+const emits = defineEimts(["nodeClick"]);
+```
+
+### 文件夹下都命名为 index.vue 原因
+
+- 组织结构清晰
+- 简化引入路径
+  - JS 中导入模块的时候，如果文件名是 index，可以省略文件名字部分，只需要写文件夹路径
+- 避免命名冲突
+  - 大项目中，可能有多个组件或页面使用相同的名称
+
+### svg
+
+- 在二维平面中设置画布
+
+## 10.17
+
+- 发布-订阅模式
+
+  - 发布者，订阅者，第三方
+  - 事件总线
+    - eventbus.on
+    - eventbus.$emit
+    - 写的函数定义在外面的原因
+      - 删除自定义事件，防止内存泄露，在生命周期的销毁阶段执行
+
+- map 方法
+
+  - in 获取的是 key，value 所有可枚举
+  - of 获取的是 value
+  - entries
+    - 获取的 key 和 value
+
+```js
+const values = myMap.values();
+for (const value of values) {
+  console.log(`Value: ${value}`);
+}
+```
+
+- values
+  - 获取 map 对象中所有值的迭代器
+
+```js
+const values = myMap.values();
+for (const value of values) {
+  console.log(`Value: ${value}`);
+}
+```
+
+## 10.18
+
+### 删除对象中的某一项
+
+- delete
+
+```js
+object.delete.xx;
+```
+
+### span 是行内元素，不能放置块级元素
+
+- 如果需要转换的话，需要修改样式
+  - display:block
+
+### 滚动条
+
+```css
+::-webkit-scrollbar {
+  width: 3px;
+  height: 1px;
+}
+
+::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  background-color: rgba(0, 0, 0, 0.25);
+}
+
+::-webkit-scrollbar-track {
+  background-color: #f6f6f6;
+}
+
+::-webkit-scrollbar-thumb,
+::-webkit-scrollbar-track {
+  border: 0;
+}
+```
+
+### 根据开发/生产环境进行不同的引入
+
+- 开发环境 require
+
+  - 更快的热更新
+    - 使用 require 语法可以更快的进行模块的热更新
+    - 修改代码时，开发服务器可以更快的重新加载模块，而不需要重新编译整个应用
+  - 即时反馈
+    - 立即看到代码的修改效果
+
+- 生产环境 import
+  - 代码分割
+    - import 语法支持动态导入
+      - 可以将应用程序拆分为多个小的代码块（chunks），并需要按需加载
+      - 减少初始加载时间
+  - 懒加载
+    - 用户需要时才加载特定的模块或组件
+  - 更好的优化
+    - 生产环境中可以对 import 语法进行更好的优化
+      - 去除未使用的代码（Tree Shaking）
+      - 压缩代码
+    - 减少打包后的文件大小，提高应用的加载和运行性能
+
+```js
+const loadView = (view) => {
+  if (!view) {
+    return Layout;
+  }
+  if (process.env.NODE_ENV === "development") {
+    return (resolve) => require([`@/views${view}`], resolve);
+  } else {
+    // 使用 import 实现生产环境的路由懒加载
+    return () => import(`@/views${view}`);
+  }
+};
+```
