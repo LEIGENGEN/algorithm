@@ -822,6 +822,43 @@ axios.create({
 
 - vue 通过 router-view 来进行内容的展示，在 router 的 index 中，component 会根据 path 路径的不同来进行不同组件的加载
 
+- 两种方式
+
+  - hash
+
+    - url 表现形式
+      - url 中使用#符号
+    - 工作原理
+      - 基于浏览器的 hash(锚点)机制，hash 部分的变化不会导致页面重新加载，浏览器会触发 hashchange 事件，vue-router 监听这个事件并进行响应的路由切换
+        - 所以这里跳转 this.$router 要添加相对完整的路径
+        - this.$router.push(`/result/detail/${id}`)
+    - 兼容性好,支持所有现代浏览器，包括一些老旧浏览器
+    - url 带有#符号，不够美观，不利用 SEO(搜索引擎优化)
+
+  - url 表现形式
+    - 使用正常的 url
+  - 工作原理
+    - 基于 HTML5 的 historyAPI(pushState 和 replaceState)，通过这些 API，vue-router 可以在不重新加载页面的情况下改变 url，并且浏览器会触发 popState 事件，vue-router 监听这个事件并进行响应的路由切换
+  - 更符合 url 格式，利于 SEO
+  - 需要服务器配置支持，如果用户直接返回某个深层路径(例如:http://example.com/home)，服务器需要正确地返回应用的html文件
+
+- vue-router 只关心在路由配置中定义的路径，而不是文件系统中实际的文件路径！！！
+
+  - 在组件中使用 this.$router.push 方法来导航到一个路由路径，而不是文件系统中的路径！！
+  - 提示没有路径，跳转不进来，component 应该是一个路径一个页面,不该带：id！！！！
+    　 - 查问题的时候要看最原始的数据，而不是处理后的
+    ![avatar](image/Snipaste_2024-11-20_20-54-19.png)
+
+- 实现 SEO 优化
+  - 页面标题和元标签
+    - 标题 title
+    - <meta name>
+  - 语义化 html
+    - header
+    - nav
+    - main
+    - footer
+
 ## watch 和 computed
 
 - watch
@@ -904,7 +941,15 @@ npm run serve
   - 要在 main.js 中引入
 
 - @title
+
   - 会有空格导致报错，使用@sentence
+
+- 对于 mock 出现问题的排查
+  - 是否在 main.js 中引入了
+  - 请求方式是 get 还是 post
+  - 请求方法是否被调用了 onMounted
+  - 请求的地址是否正确识别
+    - mock 的地址是否需要传入参数的，正则匹配
 
 ```js
 import "../mock/index";
@@ -1025,7 +1070,7 @@ const targetHostNumber = computed(() => route.params.targetHostNumber);
 
 - console.log 在浏览器中输出的是最后的结果，对于延时数据查找不到，但是 length 不会
 
-## 11.15
+# 11.15
 
 ### CMS
 
@@ -1073,7 +1118,7 @@ const emits = defineEimts(["nodeClick"]);
 
 - 在二维平面中设置画布
 
-## 10.17
+# 11.17
 
 - 发布-订阅模式
 
@@ -1108,7 +1153,7 @@ for (const value of values) {
 }
 ```
 
-## 10.18
+# 11.18
 
 ### 删除对象中的某一项
 
@@ -1182,3 +1227,37 @@ const loadView = (view) => {
   }
 };
 ```
+
+# 11.19
+
+- sort
+  - 对于嵌套数据排序，((a, b) => a[0] - b[0])
+  - 返回值为数组的索引，是直接修改源数组的
+
+```js
+let intervals = [
+  [1, 3],
+  [2, 6],
+  [8, 10],
+  [15, 18],
+];
+intervals.sort((a, b) => a[0] - b[0]);
+```
+
+- 503 状态码
+
+  - 服务器暂时无法处理请求
+  - 服务器过载/正在维护
+
+- reduce
+  - 使用的是 cur 和 next 中的属性！！！
+
+```js
+let downloadSize = temp.reduce((cur, next) => (cur += next.downloadSize), 0);
+```
+
+# 11.20
+
+## 为什么 vue2 中的 data 是一个函数，而不是一个对象
+
+- 确保每个组件实例都有一个独立的 data 对象，从而避免数据共享和相互影响
