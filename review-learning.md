@@ -93,9 +93,7 @@ const tree = require("");
   ```
 
 - table 实现多选
-
   - select 单写一个 table-column
-
 - default-active
 
   - 默认激活菜单的 index
@@ -103,6 +101,20 @@ const tree = require("");
 - 固定高度
 
   - height 属性
+
+- 间隔颜色
+
+  - stripe
+
+- 顶部颜色
+
+```css
+:header-cell-style="{
+  background: '#F6F6F6',
+  color: '#161C24',
+  fontSize: '12px',
+}" ;
+```
 
 ### menu
 
@@ -850,6 +862,7 @@ axios.create({
     ![avatar](image/Snipaste_2024-11-20_20-54-19.png)
 
 - 实现 SEO 优化
+
   - 页面标题和元标签
     - 标题 title
     - <meta name>
@@ -858,6 +871,31 @@ axios.create({
     - nav
     - main
     - footer
+
+- 鉴权
+  - 防止没有登录校验就通过
+  - 每个路由都要加上 meta:{requireAuth:true}
+
+```js
+router.beforeEach((to, from, next) => {
+  if (to.matched.some((record) => record.meta.requiresAuth)) {
+    // 需要鉴权的路由
+    if (!isAuthenticated()) {
+      // 用户未登录，重定向到登录页面
+      next({
+        path: "/login",
+        query: { redirect: to.fullPath }, // 登录后重定向回原页面
+      });
+    } else {
+      // 用户已登录，允许访问
+      next();
+    }
+  } else {
+    // 不需要鉴权的路由，允许访问
+    next();
+  }
+});
+```
 
 ## watch 和 computed
 
@@ -1261,3 +1299,79 @@ let downloadSize = temp.reduce((cur, next) => (cur += next.downloadSize), 0);
 ## 为什么 vue2 中的 data 是一个函数，而不是一个对象
 
 - 确保每个组件实例都有一个独立的 data 对象，从而避免数据共享和相互影响
+
+# 11.21
+
+## 封装 iconSvg
+
+- 判断传入的图片是否为外部链接
+
+  - 通过 isExternal
+    - 正则表达式，判断是否是 http
+      - 外部 通过 div img-url
+      - 内部
+  - v-on="$listener"
+    - 将$listeners 对象中的所有事件监听器绑定到当前元素上，这样，当前组件的根元素就可以响应父组件传递的所有事件
+      - 确保父组件传递的事件监听能够在当前组件中正常工作
+    - use 元素引用的图形的 URL，通常是一个带有#的 ID
+
+## 鉴权
+
+- JWT(Json Web Token)
+  - 网络安全传输信息的开放标准，用于身份验证和信息交换
+  - 组成
+    - header 头部
+    - payload 载荷
+    - signature
+- http 是无状态的
+  - 这从访问过后，浏览器下一次不知道你说重新进入还是保持
+- cookie
+  - 解决 http 每次请求都得自带数据给服务器的技术
+  - 浏览器发起 http 请求，服务器会发起 set-cookie，将 cookie 中的名和值填充起来，发送给浏览器，浏览器就会保存起来，浏览器以后发送的时候都会带上这个 cookie
+    - 核心：每个请求都自动发送 cookie 到响应的服务器
+- session
+  - sessionID 和 绘画结束事件
+- token
+  - 分布式 sessionID
+
+## $el和$data
+
+- $el 是 vue 实例的根 dom 元素
+  - 实例挂载在 DOM 之后才会存在
+  - 创建周期和 destoryed 没有
+    - beforeMounted 的时候，vue 实例的$el 初始化，但还是挂载之前的虚拟 dom 节点
+    - mounted 之后，destoryed 之前都有
+- $data 是 vue 实例的 data 数据对象
+  - 在 vue 实例创建的时候就已经存在，created（包含）之后并且在整个生命周期都可以访问
+
+## appendChild 是同步任务
+
+## vue 双向绑定
+
+- new 一个 vue 实例的时候，需要一个对象，告知挂载在哪个对象中，数据是什么
+- 数据劫持
+  - 如果对象属性发生拜年话，就需要通知到
+  - 初始化的时候就是使用 Observer 监听实例上的$data
+    - 对每个属性都进行监听
+    - 数据监听 Object.defineProperty（对象，属性，enmuerable，getter，setter）
+      - 为每个属性都设置 getter 和 setter，实际名字是使用 set，get
+      - 使用 get 的时候，需要保存我们改动的属性，因为 define 过后，属性就被修改了，获取的是 undefined
+        - 使用递归
+        - 没有子属性，子属性没有不是对象
+  - 渲染数据
+    - compile 解析函数
+      - 将 vue 实例上的数据解析到页面
+      - 获取到这个元素，保存到这个$el 中
+    - 临时保存需要修改的部分
+      - createDocumentFragment 临时保存
+    - 替换文档碎片
+      - {{}}插值表达式
+        - 正则
+  - 发布-订阅者模式
+  - 使用 v-model
+    - 判断哪些元素绑定了 v-model,并且的 input 框
+
+## 折叠面板
+
+- collaspe
+- menu
