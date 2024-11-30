@@ -1,3 +1,21 @@
+## Midea
+
+- 可卸载信息，卸载列表的选择框显示
+  - 通过定义好的[-2,-1,0,100]
+    - 这里的 0 初始化，卸载失败 所以在卸载失败的时候查看会有问题
+- 部署版本默认最新的是依据 publishStatus 字段是否为 1 来显示的 fix 版本
+
+## 提升
+
+- 封装组件
+  - @click.stop 阻止事件冒泡
+    - 点击事件不会冒泡到父元素中，并且这个父元素也有一个点击事件处理器，使用后可以防止点击按钮的时候触发父元素的方法
+  - 插槽的使用
+
+## 术语
+
+- currentPage 当前页面
+
 # 10.27
 
 ## require 和 import 的区别
@@ -178,6 +196,8 @@ const activeOpends = computed(()=>{
   overflow: visible;
 }
 ```
+
+- 对于菜单组件需要一直有个布局，要设置一个 chidren，其他都放在 children 里面
 
 ### el-main
 
@@ -861,6 +881,15 @@ axios.create({
     　 - 查问题的时候要看最原始的数据，而不是处理后的
     ![avatar](image/Snipaste_2024-11-20_20-54-19.png)
 
+- SEO
+
+  - siteMap
+  - ssr
+    - vue 框架，异步数据
+  - ssg
+    - 直接提前把所有数据生成一个静态页面
+    - 数量量小
+
 - 实现 SEO 优化
 
   - 页面标题和元标签
@@ -875,6 +904,8 @@ axios.create({
 - 鉴权
   - 防止没有登录校验就通过
   - 每个路由都要加上 meta:{requireAuth:true}
+  - 监听到端口访问 401 未授权
+    - 在这里做处理，获取当前的路径，如果不是/login 则提示错误，强制跳转
 
 ```js
 router.beforeEach((to, from, next) => {
@@ -906,6 +937,14 @@ router.beforeEach((to, from, next) => {
   - 同步计算
     - 访问一个计算属性的时候，vue 会立即计算并返回结果，而不是异步地等待某个操作完成
       - 计算属性不会涉及到异步操作
+- vue2 使用 watch
+
+```js
+product: 'refresh',
+version: 'refresh',
+targetId: 'refresh',
+metaScriptData: 'initInput',
+```
 
 ## 获取路径
 
@@ -924,6 +963,21 @@ const isHomeVisible = computed(() => router.path === "/home");
 import { useRouter } from "vue-router";
 const router = useRouter();
 router.options.routes;
+```
+
+## 路径参数
+
+- 传递多个参数
+- query
+
+```js
+router.push({ name: pageName, query: { ip: data.ip } });
+json.stirngfy;
+json.parse;
+```
+
+```js
+this.$route.params.id;
 ```
 
 ## vite
@@ -1031,6 +1085,8 @@ interface tableDataTs {
 }
 let tableData: Array<tableDataTs> = reactive([]);
 ```
+
+- ？：类比 JS 中的？.
 
 # 11.12
 
@@ -1375,3 +1431,75 @@ let downloadSize = temp.reduce((cur, next) => (cur += next.downloadSize), 0);
 
 - collaspe
 - menu
+
+# 11.25
+
+## 定义对象属性时，不能直接使用构造函数（Number、Date）作为属性的默认值
+
+```js
+formBak: {
+    projectKeyword: "",
+    unitCodeList: [],
+    envCode: "",
+    deployHourLeast: Number,
+    deployHourMost: Number,
+    failTimes: Number,
+    beginTime: Date
+},
+```
+
+## 传递路径参数，参数过多，JSON.stringfy
+
+# 11.26
+
+## export 导出功能
+
+- 文件名，导出的数据，导出的格式字段
+- export 参数，如果是加上了这个参数，那么结果返回的就是一个数组，不是一个对象，没有 pageSize，pageNumber
+
+## 上传功能
+
+- 点击一个导入按钮，就进行数据的导入
+  - 使用 ref 进行处理，
+    - input 标签
+      - display:none
+      - this.$ref.importloadingRef.click()
+      - @change='importlloading'
+  - file
+    - 上传二进制文件，不需要 key：value 对应
+
+# 11.27
+
+## v-if 和 v-else
+
+- 两个结构之间，里面不能有#title(例如在 table-column 中的一级标题)
+- v-else 和 v-else-if 指令必须紧跟在 v-if 或 v-else-if 指令之后，不能有其他元素或模板块插入其中
+
+# 11.28
+
+## 插槽
+
+- vue3
+  - 子组件中定义
+  ```html
+  <slot name=""></slot>
+  ```
+  - 父组件中使用
+    - 是 v-slot：冒号，不是 v-slot=""
+  ```html
+  <template v-slot:xxx></template>
+  ```
+
+```js
+  <div  v-html="scope.row[item.prop]" @mouseenter="changShowTooltip($event)">
+```
+
+- @mouseenter
+  - 用于监听鼠标进入元素时触发的事件
+  - 相当于 addEventListener
+- $event
+  - 传递原生事件对象的特殊变量
+
+## 异步数据
+
+- 直接在使用子组件的地方添加 v-if
