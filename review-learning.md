@@ -4,6 +4,46 @@
   - 通过定义好的[-2,-1,0,100]
     - 这里的 0 初始化，卸载失败 所以在卸载失败的时候查看会有问题
 - 部署版本默认最新的是依据 publishStatus 字段是否为 1 来显示的 fix 版本
+- guide 流程
+
+  - 获得系统变量
+
+  ```js
+  const resSys = await getSysConfs({
+    env: this.deploy.envCode,
+  });
+  ```
+
+  - 在 result 中先导入所有的配置到 state 中(对应的 label，name)
+
+  ```js
+  const resMeta = await getMetaConfs({
+    deployId: de.id,
+    env: de.envCode,
+  });
+  this.setMetaConfs(resMeta);
+  ```
+
+  - 填写配置中的 ProductConfs，获得实际配置项，对实际配置项中的数据进行调整
+    - 字符串数字改为数字
+    - 如果 state 中的配置中又对应的产品 code
+      - 将会(从 state 中获取到的数据)对应的 type 和 globalSingleton 赋值给这个产品
+
+  ```js
+  resProducts.forEach((p) => {
+    for (const key in p.confs) {
+      p.confs[key] = this.convertToObj(p.confs[key]);
+    }
+    if (this.metaConfs[p.code]) {
+      p.type = this.metaConfs[p.code].type;
+      p.globalSingleton = this.metaConfs[p.code].globalSingleton;
+    }
+    // p.isAddConf = false
+  });
+  ```
+
+- 在 deploy 执行阶段，deploy 的值是从 state 中获取的，deploy/get 接口
+- 在新增部署的时候，对于数据进行处理，对于每个 select 选项能够又 formVersion 进行获取值
 
 ## 提升
 
@@ -295,6 +335,12 @@ const dfs = () => {};
 
 - 引入 mitt 库，向外导出
 
+```js
+import mitt from "mitt";
+const eventBus = mitt();
+export default eventBus;
+```
+
 ## excel 表格导出
 
 - 其实后端就能单独实现
@@ -362,6 +408,7 @@ this.$refs.chlidComponent.$refs.child;
 - pop
 
   - 删除数组最后一个
+  - 返回数组的最后一个元素
 
 - push
 
@@ -370,10 +417,12 @@ this.$refs.chlidComponent.$refs.child;
 - unshift
 
   - 在数组最前面添加
+  - 返回新的长度
 
 - shit
 
   - 删除数组第一个
+  - 返回第一个元素的值
 
 ### 循环中不希望第一项和第一项进行匹配
 
@@ -649,6 +698,7 @@ checkPluginUnique() {
 
 - 数据不一致，延时，父组件获得的数据延时传入
   - 使用 watch，立即执行，深度监听，设置变量接收
+  - 在子组件上添加 v-if
 
 ```js
 let menuListBak = reactive([]);
@@ -665,6 +715,56 @@ watch(
 );
 ```
 
+- table 中的 select 前端进行子校验搜索
+
+  - 前端需要做到截取，只显示前面 20 个
+  - 前端自己进行搜索
+  - 搜索的时候，点击了对应的需要正确显示，但是点击的目标之后，返回的是前 20 条目中的选项，只有点击了一次正确的时候，才会能够正常实现需求
+
+- 请求的二次封装
+  - 创建 axios 实例
+  ```js
+  const service = axios.create({
+    baseURL,
+    timeout: 2000,
+  });
+  ```
+  - 请求拦截器
+  ```js
+  service.interceptors.request.use(
+    (config) => {
+      const token = localStorage.getItem("token");
+      if (token) {
+        config.headers["X-token"] = token;
+      }
+      return config;
+    },
+    (error) => {
+      return Promise.reject(error);
+    }
+  );
+  ```
+  - 响应拦截器
+  ```js
+  // 添加响应拦截器
+  service.interceptors.response.use(
+    (response) => {
+      const res = response.data;
+      if (res.code !== 10000) Message.error(res.message);
+      // 登录超时
+      if (res.code === -2) {
+        localStorage.removeItem("token");
+        window.location.href = location.origin + "/cms-manage/#/login";
+      }
+      return res;
+    },
+    (error) => {
+      console.log("error" + error);
+      return Promise.reject(error);
+    }
+  );
+  ```
+
 ## git
 
 - git revert
@@ -679,6 +779,12 @@ watch(
 
 ```js
   git cherry-pick <commit-hash>
+```
+
+- 清空关联远程库
+
+```js
+ git remote remove origin
 ```
 
 ## this.$route
@@ -835,6 +941,9 @@ interface Props{
 }
 ```
 
+- useRoute 返回当前的路径信息
+  - 跟目录做默认选中 route.path
+
 ## this.$nextTick
 
 - vue 在更换 dom 的时候是异步执行的，如果是同步更新，会有损性能，当侦听到数据变化的时候，vue 将开启一个队列，缓冲在同一时间循环中所有数据变更
@@ -930,7 +1039,7 @@ router.beforeEach((to, from, next) => {
 
 ## watch 和 computed
 
-- watch
+- computed
   - 缓存
   - 页面刷新的时候立刻加载
   - 深度监听
@@ -1503,3 +1612,106 @@ formBak: {
 ## 异步数据
 
 - 直接在使用子组件的地方添加 v-if
+
+# 12.3
+
+## 路径传参
+
+- 三种方法
+  - 加密
+    - 后续参数过多不好
+  - 接口传递
+  - 公共状态 state
+- 在路径中 encode 存在特殊字符% #会被转换
+
+## vue2 中引入的方法要用在模板的时候
+
+```js
+ <div class="group-date">{{ formatISOStringToDate(group.createTime) }}</div>
+ import { formatISOStringToDate } from '../../../utils/time.js'
+ methods: {  formatISOStringToDate}
+```
+
+# 12.4
+
+## 事件修饰符
+
+- .prevent
+
+  - 阻止默认事件的行为
+  - 调用 event.preventDefault()
+  - 在链接(<a></a>标签)上使用.prevent 可以防止链接的默认跳转行为
+
+- native
+  - 不触发组件的方法，而是触发自定义原生的方法(在 methods 里面的)
+
+## watch
+
+- 可以在监听的时候，监听当前的路由$route 对象
+- 所有绑定到 this 上的属性都可以进行监听
+
+```js
+ watch: {
+      $route() {  this.getBreadCrumb();}
+  },
+```
+
+## ref
+
+- 使用 ref(实例)的时候，如果这个元素是被一个 dialog 包裹，不能访问到
+- 父组件中使用子组件 ref 调用方法
+
+```js
+this.$refs.ETableRef.$refs.multipleTable.toggleRowSelection(val);
+```
+
+## 样式
+
+```css
+border-left: 0;
+border-bottom: 0;
+border-right: 0;
+/* 化简 */
+border: 0;
+border-top: 1px solid;
+```
+
+- less、sass 文件全局注入依赖
+  - 样式的自动化导入
+
+## 标签
+
+- transition
+  - 过渡的显示和隐藏
+  - .fade-enter-active
+  - .fade-leave-active
+  ```html
+  <transition name="fade" /> <transition-group></transition-group>
+  ```
+
+## 安装依赖
+
+- 遇到报错，如果是某个版本冲突暂时没有时间解决
+  - npm i --force
+
+## vue.config.js
+
+- eslint 校验错误
+  lintOnSave:false
+- 启动的时候默认打开
+  devServer:{open:true}
+
+## 字体图标异步写在 index 的 link ref
+
+## 拖拽
+
+- draggable 是否可以拖拽
+- @dragstart
+- @dragend
+
+##　手势
+
+- 可移动
+  - cursor:move
+- 禁用
+  - cursor:not-allowed
