@@ -42,8 +42,18 @@
   });
   ```
 
-- 在 deploy 执行阶段，deploy 的值是从 state 中获取的，deploy/get 接口
+- 在 deploy 执行阶段
+
+  - deploy 的值是从 state 中获取的，deploy/get 接口
+    - 显示三个按钮操作 0 1 100 三种状态来进行显示
+
 - 在新增部署的时候，对于数据进行处理，对于每个 select 选项能够又 formVersion 进行获取值
+
+- 部署组件中默认选中最新版本的逻辑
+  - 选中第一个 publishStatus 为 1 的版本
+  - 像 publishStatus 为 1 并且更新时间为最新
+    - 但是更新时间最新，又不想它是默认的
+      - 原因是有个 99 排序
 
 ## 提升
 
@@ -55,6 +65,11 @@
 ## 术语
 
 - currentPage 当前页面
+
+## CMS
+
+- iframe
+  - @load 加载完成后
 
 # 10.27
 
@@ -721,15 +736,50 @@ watch(
   - 前端自己进行搜索
   - 搜索的时候，点击了对应的需要正确显示，但是点击的目标之后，返回的是前 20 条目中的选项，只有点击了一次正确的时候，才会能够正常实现需求
 
+  - @focus
+    - 将这个值列表给到记录版本的变量
+    - 执行原本的方法：changeSelectRowVersion
+
+  ```js
+  changeSelectRowVersion(row) {
+      this.recordFilSprintVersionList = row.versions
+      this.handleTableSelectChange(row, 'version')
+    },
+  ```
+
+  - 在渲染显示的时候，将渲染的数据经过一个方法，设置一个变量 flag，当这个 flag 变化的时候
+
+  ```js
+  supportiveFilterFn(list, sliceNumber = list.length, flag = false) {
+      if (flag) return this.filterSprintVersionList
+      else return list.slice(0, sliceNumber)
+    },
+  ```
+
+  - 远程搜索 filter-method
+
+  ```js
+  filterSprintVersionFn(searchString) {
+      this.filterFlag = true //这里设置为true，当选中的的时候触发false
+      if (searchString === '') return this.filterSprintVersionList = this.supportiveFilterFn(this.recordFilSprintVersionList, 20)
+      const regex = new RegExp(searchString, 'i');
+      this.filterSprintVersionList = this.recordFilSprintVersionList.filter(item => regex.test(item.versionName) || regex.test(item.sprintName));
+    },
+  ```
+
 - 请求的二次封装
+
   - 创建 axios 实例
+
   ```js
   const service = axios.create({
     baseURL,
     timeout: 2000,
   });
   ```
+
   - 请求拦截器
+
   ```js
   service.interceptors.request.use(
     (config) => {
@@ -744,7 +794,9 @@ watch(
     }
   );
   ```
+
   - 响应拦截器
+
   ```js
   // 添加响应拦截器
   service.interceptors.response.use(
@@ -764,6 +816,8 @@ watch(
     }
   );
   ```
+
+  - 大文件下载
 
 ## git
 
@@ -1677,7 +1731,16 @@ border-top: 1px solid;
 ```
 
 - less、sass 文件全局注入依赖
+
   - 样式的自动化导入
+
+- 这里的 app，在 ID 为 app 中的元素中查找：元素选择器
+
+```css
+#app .hideSidebar .md-submenu > .md-submenu__title .iconfont {
+  margin-left: 18px;
+}
+```
 
 ## 标签
 
@@ -1715,3 +1778,40 @@ border-top: 1px solid;
   - cursor:move
 - 禁用
   - cursor:not-allowed
+
+# 12.6
+
+## 路径中的 encode，存在%、#...时会被转化
+
+## 安装依赖
+
+- 如果是某个版本冲突暂无时间解决
+  - npm i --force
+
+# 12.9
+
+## webpack
+
+- 模块化自动化导入
+  - require.context
+    - 创建自己的 context
+    - 搜索的目录，是否需要继续搜索其子目录，匹配文件的正则表达式
+    - 返回一个方法，加载匹配的模块
+      - 导出一个 require 函数，这个函数可以接收一个参数
+      - 返回三个属性
+        - resolve
+          - 一个函数，返回 request 被解析后得到的模块 id
+        - keys
+          - 一个函数，返回一个数组，所有能被处理的内容
+          ```js
+          require.context("./modules", true, /\.js$/).keys();
+          ```
+  - context moudule
+
+# 12.10
+
+## 下载
+
+- 下载请求接口返回的是地址
+  - 通过页面进行下载
+  - window.open(url)
