@@ -58,15 +58,44 @@
 ## 提升
 
 - 封装组件
+
   - @click.stop 阻止事件冒泡
     - 点击事件不会冒泡到父元素中，并且这个父元素也有一个点击事件处理器，使用后可以防止点击按钮的时候触发父元素的方法
   - 插槽的使用
+
+- javaScript
+  - slice
+    - 有返回值
+  - splice
+    - 在当前的数组里进行修改
+  - forEach
+    - 不会返回布尔值，而是返回 undefeind，使用 some 或者 every
+  - indexOf
+    - 适合普通数组
+  - fineIndex
+    - 需要一个回调函数作为参数，而不能是一个值，一个对象
 
 ## 术语
 
 - currentPage 当前页面
 
+## IDEA
+
+- 设置格式化，vetur，在 settings 中 Editor:Default Formatter，选中
+
 ## CMS
+
+- 内部链接和外部链接
+  - 通过 app-link 组件来跳转
+    - a 标签
+    - roter-link
+- 多级菜单
+
+  - 模板
+    - 组件
+      - 函数式组件 render
+  - n 级菜单
+    - 递归渲染
 
 - iframe
   - @load 加载完成后
@@ -189,6 +218,17 @@ const tree = require("");
 }" ;
 ```
 
+- 添加加载动作
+
+```html
+<table
+  v-loading="loading"
+  element-loading-text="拼命加载中"
+  element-loading-spinner="el-icon-loading"
+  element-loading-background="rgba(0, 0,0, 0.8)"
+></table>
+```
+
 ### menu
 
 - template #title（顶级菜单）
@@ -253,12 +293,18 @@ const activeOpends = computed(()=>{
 ```
 
 - 对于菜单组件需要一直有个布局，要设置一个 chidren，其他都放在 children 里面
+- 面包屑，不显示一个值，多增加一个变量 breadcrumb
 
 ### el-main
 
 - 能够将主要区域都设置为一个整体，自适应剩下的区域
 
-### 显示弹窗
+### el-upload
+
+- before-upload
+  - 如果返回的是 true，则是直接上传
+
+### Message
 
 ```js
 this.$message({
@@ -266,6 +312,29 @@ this.$message({
   type: "error",
   duration: 5000,
 });
+```
+
+### makeDropDown
+
+- 使用的时候，如果是有循环的话，在$dropdown 里面设置对应的标签，而不是在标签里再进行循环
+
+```js
+<template #dropdown>
+  <template v-for="(subDropdown, subIndex) in mddropdowns" :key="subIndex">
+    <template v-if="subDropdown.envs.length === 1">
+      <md-dropdown-item @click="chooseEnv(subDropdown.envs[0].env, subDropdown.projectName)">
+        <span style="width: 50px;">【{{ subDropdown.envs[0].env }}】</span> {{ subDropdown.projectName }}
+      </md-dropdown-item>
+    </template>
+    <template v-else>
+      <template v-for="items in subDropdown.envs" :key="items">
+        <md-dropdown-item @click="chooseEnv(items.env, subDropdown.projectName)">
+          <span style="width: 50px;">【{{ items.env }}】</span>{{ subDropdown.projectName }}
+        </md-dropdown-item>
+      </template>
+    </template>
+  </template>
+</template>
 ```
 
 ### 默认打开开启
@@ -439,6 +508,10 @@ this.$refs.chlidComponent.$refs.child;
   - 删除数组第一个
   - 返回第一个元素的值
 
+- join
+  - 将数组中所有元素连接成一个字符串，元素之间通过指定分隔符进行分割
+    ![avatar](image/Snipaste_2024-12-17_19-29-21.png)
+
 ### 循环中不希望第一项和第一项进行匹配
 
 ```js
@@ -527,10 +600,37 @@ export { default as AppMain } from "./AppMain";
 ## vuex
 
 - actions
+
   - 第一个参数 commit
     - 用于提交 mutation 的方法
   - 第二个参数 payload
+
     - 传递给 mutation 的载荷 payload
+
+      - payload，会将第一个包含第二个参数都收集到一个变量中，使用 Mutaion 方法的时候可以解构
+
+      ```js
+      DELETE_COMPONENT(state, { index }) {}
+      ```
+
+  - 可以调用不同的 mutations
+  - 不能 actions 里面定义 state
+    - vuex 的核心理念是通过 mutaions 来修改 state，来确保状态变化的可追踪性和可调试性
+      - 可追踪性
+        - 用过 mutations 修改 state，可以确保所有状态变化都是可追踪的
+      - 单一职责
+        - actions 的职责是处理异步操作/复杂逻辑，而 mutations 的职责是修改 state
+      - 同步性
+        - mutations 必须是同步的，确保状态变化的可预测性和一致性
+
+```js
+initMessage({ commit }) {}
+```
+
+- 这里的 commit 是从 context 对象中解构出来的
+- actions 函数的第一个参数是一个上下文对象：context
+  - state 当前模块的局部状态
+  - commit 提交的 mutations 方法
 
 ```js
 setPerms({ commit }, perms) {
@@ -549,7 +649,12 @@ setPerms({ commit }, perms) {
 
 ```js
 const is Collaspse = computed(()=>store.state.commonState.isCollaspse)
+const is Collaspse = this.$store.getters['commonState/isCollapse']
 ```
+
+- mapState 一定要放在 computed 里面
+
+  - methods 里面不会缓存，每次都是重新执行，方法不是响应式的，不能自动响应 vuex 中 state 的变化
 
 - 模块化
   - 调用的时候要加上模块名
@@ -818,6 +923,47 @@ watch(
   ```
 
   - 大文件下载
+    - 请求头设置了 responseType:blob，但返回的数据还是原始数据
+      - mock.js 设置了拦截，会将 responseType 变为''
+      ```js
+      const url = `${URI_PREX}/docs/help/download/batch`;
+      let data = JSON.stringify({ list: this.checkedList });
+      const config = {
+        headers: { "Content-Type": "application/json" },
+        responseType: "blob",
+      };
+      axios
+        .post(url, data, config)
+        .then((response) => {
+          const contentDisposition = response.headers["content-disposition"];
+          let downloadFileName = "";
+          if (contentDisposition) {
+            const fileNameMatch = contentDisposition.match(/filename="?(.+)"?/);
+            console.log(fileNameMatch, "fileNameMatch");
+            if (fileNameMatch && fileNameMatch.length === 2) {
+              downloadFileName = decodeURIComponent(fileNameMatch[1]);
+            }
+          }
+          const blob = response.data;
+          // 创建一个 URL 对象
+          const url = URL.createObjectURL(blob);
+          // 在浏览器中下载文件
+          const a = document.createElement("a");
+          a.href = url;
+          a.download = downloadFileName; // 使用文件名
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          // 释放 URL 对象
+          URL.revokeObjectURL(url);
+        })
+        .catch((error) => {
+          return MdMessage({
+            message: `下载失败${error}`,
+            type: "warning",
+          });
+        });
+      ```
 
 ## git
 
@@ -953,10 +1099,16 @@ this.pastedText = await navigator.clipboard.readText();
 ## 获取路径时候的步骤
 
 - 计算属性
+
   - 确保当前路由信息发生变化的时候，依赖这些信息的组件能够自动更新
+
     - 响应式更新
     - 性能优化
       - computed 会缓存其结果，只有在依赖的值发生变化的时候才会重新计算
+
+  - 和 methods 的区别
+    - method 不会缓存，每次都是重新执行
+    - 方法不是响应式的，不能自动响应 vuex 中 state 的变化
 
 ```js
 import { useRouter } from "vue-router";
@@ -1329,20 +1481,6 @@ const targetHostNumber = computed(() => route.params.targetHostNumber);
 
 # 11.15
 
-### CMS
-
-- 内部链接和外部链接
-  - 通过 app-link 组件来跳转
-    - a 标签
-    - roter-link
-- 多级菜单
-
-  - 模板
-    - 组件
-      - 函数式组件 render
-  - n 级菜单
-    - 递归渲染
-
 ### path.resolve
 
 - path.resolve
@@ -1714,6 +1852,7 @@ formBak: {
 
 - 使用 ref(实例)的时候，如果这个元素是被一个 dialog 包裹，不能访问到
 - 父组件中使用子组件 ref 调用方法
+- refs 不是响应式的，要在有数据渲染的时候才可以进行 toggleRowSelection(勾选)
 
 ```js
 this.$refs.ETableRef.$refs.multipleTable.toggleRowSelection(val);
@@ -1739,6 +1878,16 @@ border-top: 1px solid;
 ```css
 #app .hideSidebar .md-submenu > .md-submenu__title .iconfont {
   margin-left: 18px;
+}
+```
+
+- 深度修改 ：v-deep 深度
+
+```css
+::v-deep .load-more-menu > .el-submenu__title {
+  padding-left: 10px !important;
+  color: red;
+  margin-bottom: 0px !important;
 }
 ```
 
@@ -1815,3 +1964,143 @@ border-top: 1px solid;
 - 下载请求接口返回的是地址
   - 通过页面进行下载
   - window.open(url)
+
+# 12.11
+
+## script 放在 template 上面，这样页面渲染的时候是会像 html 一样先执行 script 然后才执行 dom 吗
+
+- vue 的渲染机制和传统的 html 机制不同
+- vue 的虚拟 dom 和响应式系统控制的
+  - vue 先解析组件中的选项 data，methods 等，然后生成虚拟 dom 树，最后将虚拟 dom 树渲染成实际的 dom 元素
+
+# 12.12
+
+## 文件分片上传
+
+- slice 分片
+
+  - 简单的进行数学运算，对于其中的类型、名字、字段等都没有设计，所以分片速度快
+  - 如果是要读取数据，得使用 fileReader
+  - 当网络发生错误，只需要进行一次 axios 请求，已经上传过的文件片段不用再上传，但是请求得需要告知这个文件是什么-(文件 hash)，将任意数据转为固定长度的字符串(单向)
+  - 使用增量算法，计算完这个值后就不要扔掉
+    - 递归，当这个值大于等于这个分块的数量
+
+- web-worker
+  - 注意事项
+    - public 文件夹是能够线上访问的文件夹，worker 的文件不能是在本地的
+      - 必须是网络上的同源文件
+      - 文件夹下引用
+        - importScript
+        - 可以使用 import
+          - 但是需要说明
+          ```js
+          new Worker("www",{type="modules"})
+          ```
+    - self 在这个文件里面，只会指向自己，不会像 this 会被改变
+    - 不能获得 dom 对象，dom 只有主线程有，vue 的响应式也是不能获取，所以 worker 都做计算使用
+      - setTimeout
+      - setInterval
+    - 模块应用
+      - importScript
+        - 可以使用 import
+          - 但是需要说明
+          ```js
+          new Worker("www",{type="modules"})
+          ```
+
+## 主线程阻塞，页面就无法点击输入
+
+# 12.16
+
+## computed 中 xx(){}和 xx:()=>{}的区别
+
+- 箭头函数定义计算属性的时候，this 指向的是定义时的上下文，而不是 vue 实例，无法访问到这里面的属性或方法
+
+# 12.17
+
+## 文件下载
+
+- 使用 window.open
+- 在请求的时候请求头设置 responseType:blob，但是返回的数据还是原始数据
+  - mock 设置了拦截
+  ```js
+  const url = `${URI_PREX}/docs/help/download/batch`;
+  let data = JSON.stringify({ list: this.checkedList });
+  const config = {
+    headers: { "Content-Type": "application/json" },
+    responseType: "blob",
+  };
+  axios
+    .post(url, data, config)
+    .then((response) => {
+      const contentDisposition = response.headers["content-disposition"];
+      let downloadFileName = "";
+      if (contentDisposition) {
+        const fileNameMatch = contentDisposition.match(/filename="?(.+)"?/);
+        console.log(fileNameMatch, "fileNameMatch");
+        if (fileNameMatch && fileNameMatch.length === 2) {
+          downloadFileName = decodeURIComponent(fileNameMatch[1]);
+        }
+      }
+      const blob = response.data;
+      // 创建一个 URL 对象
+      const url = URL.createObjectURL(blob);
+      // 在浏览器中下载文件
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = downloadFileName; // 使用文件名
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      // 释放 URL 对象
+      URL.revokeObjectURL(url);
+    })
+    .catch((error) => {
+      return MdMessage({
+        message: `下载失败${error}`,
+        type: "warning",
+      });
+    });
+  ```
+
+# 12.23
+
+## indexOf 适合普通数组，findIndex，find 适合对象数组
+
+## 没有 webkit 内核的是 firefox
+
+## 日期
+
+- 获取当前第一天
+
+  - 0 表示一月
+
+- 当两个 date 对象进行相减的时候，结果是他们之间的毫秒差
+- 获取指定日期是星期几，返回 0-6
+
+```js
+new Date(year, 0, 1);
+date.getDay();
+```
+
+- 返回这个时间是第几天(星期几)
+
+```js
+function getDayforWeek(dateString) {
+  const date = new Date(dateString);
+  const year = date.getFullYear();
+  const startOfYear = new Date(year, 0, 1); // 0 表示 1 月
+  const dayOfYear = Math.ceil((date - startOfYear) / (1000 * 60 * 60 * 24));
+  const daysOfWeek = [
+    "Sunday",
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday",
+  ];
+  const dayOfWeek = daysOfWeek[date.getDay()];
+  return `${dayOfYear}(${dayOfWeek})`;
+}
+```
